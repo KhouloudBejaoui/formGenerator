@@ -1,0 +1,103 @@
+.bodyLogin{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f1f4f9;
+}
+.containerLogin{
+    width: 100%;
+    display: flex;
+    max-width: 850px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+.login{
+    width: 400px;
+}
+.formLogin{
+    width: 250px;
+    margin: 60px auto;
+}
+.h1Login{
+    margin: 20px;
+    text-align: center;
+    font-weight: bolder;
+    text-transform: uppercase;
+}
+
+.pLogin{
+    text-align: center;
+    margin: 10px;
+}
+.hrLogin{
+    border-top: 2px solid #22baa0;
+}
+
+.picLogin img{
+    width: 450px;
+    height: 100%;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.formLogin .labelLogin{
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 5px;
+}
+.inputLogin{
+    width: 100%;
+    margin: 2px;
+    border: none;
+    outline: none;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+.buttonLogin{
+    border: none;
+    outline: none;
+    padding: 8px;
+    width: 252px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+    background: #22baa0;
+}
+.buttonLogin:hover{
+    background: #30a894;
+}
+.pLogin{
+    margin: 20px;
+}
+.aLogin{
+    color: black;
+    text-decoration: none;
+}
+
+/************register***************/
+
+/* alertStyles.css */
+
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .alert-success {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .alert-error {
+    background-color: #f44336; /* Red */
+  }
+  
