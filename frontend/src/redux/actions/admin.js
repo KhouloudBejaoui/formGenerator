@@ -1,4 +1,4 @@
-import { REGISTER_SUCCESS, REGISTER_FAILURE, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT,SET_ADMIN_DETAILS } from './types.js'
+import { REGISTER_SUCCESS, REGISTER_FAILURE, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT, SET_ADMIN_DETAILS } from './types.js'
 import AdminDataService from "../../services/admin.service";
 import axios from 'axios';
 
@@ -29,10 +29,10 @@ export const logout = () => ({
 
 export const setAdminDetails = (adminDetails) => {
     return {
-      type: SET_ADMIN_DETAILS,
-      payload: adminDetails,
+        type: SET_ADMIN_DETAILS,
+        payload: adminDetails,
     };
-  };
+};
 
 
 // Async action creator for registration
@@ -61,66 +61,34 @@ export const registerAdmin = (adminData) => {
 };
 
 
+export const loginAdmin = (adminData) => {
+    return async (dispatch) => {
+        try {
+            // Make the API request to the backend for login
+            const response = await AdminDataService.login(adminData);
 
- /* export const loginAdmin = (adminData) => {
-    return async (dispatch) => {
-      try {
-        // Make the API request to the backend for login
-        const response = await AdminDataService.login(adminData);
-  
-        // Assuming the server responds with a token upon successful login
-        const { token } = response.data;
-  
-        // Dispatch the LOGIN_SUCCESS action with the token if the login is successful
-        dispatch(loginSuccess(token));
-  
-        // Fetch the admin's details using the token
-        const adminDetailsResponse = await AdminDataService.getAdminDetails(token);
-  
-        // Dispatch an action to store the admin's details in the state
-        dispatch(setAdminDetails(adminDetailsResponse.data));
-  
-        // Return the entire response object
-        return response.data;
-      } catch (error) {
-        // Dispatch the LOGIN_FAILURE action with the error message if the login fails
-        dispatch(loginFailure(error.message));
-        // Throw the error to indicate that the login failed
-        throw error;
-      }
+            // Assuming the server responds with a token upon successful login
+            const { token } = response.data;
+
+            // Store the token in localStorage or a secure cookie
+            localStorage.setItem('token', token);
+
+            // Dispatch the LOGIN_SUCCESS action with the token if the login is successful
+            dispatch(loginSuccess(token));
+
+            // Fetch the admin's details using the extracted token
+            const adminDetailsResponse = await AdminDataService.getAdminDetails(token);
+
+            // Dispatch an action to store the admin's details in the state
+            dispatch(setAdminDetails(adminDetailsResponse.data));
+
+            // Return the entire response object
+            return response.data;
+        } catch (error) {
+            // Dispatch the LOGIN_FAILURE action with the error message if the login fails
+            dispatch(loginFailure(error.message));
+            // Throw the error to indicate that the login failed
+            throw error;
+        }
     };
-  };*/
-  
-  
-  export const loginAdmin = (adminData) => {
-    return async (dispatch) => {
-      try {
-        // Make the API request to the backend for login
-        const response = await AdminDataService.login(adminData);
-        
-        // Assuming the server responds with a token upon successful login
-        const { token } = response.data;
-        
-        // Store the token in localStorage or a secure cookie
-        localStorage.setItem('token', token);
-  
-        // Dispatch the LOGIN_SUCCESS action with the token if the login is successful
-        dispatch(loginSuccess(token));
-  
-        // Fetch the admin's details using the extracted token
-        const adminDetailsResponse = await AdminDataService.getAdminDetails(token);
-  
-        // Dispatch an action to store the admin's details in the state
-        dispatch(setAdminDetails(adminDetailsResponse.data));
-  
-        // Return the entire response object
-        return response.data;
-      } catch (error) {
-        // Dispatch the LOGIN_FAILURE action with the error message if the login fails
-        dispatch(loginFailure(error.message));
-        // Throw the error to indicate that the login failed
-        throw error;
-      }
-    };
-  };
-  
+};

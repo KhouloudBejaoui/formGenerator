@@ -56,15 +56,15 @@ const Sidebar = ({ adminDetails }) => {
               <li>
                 <NavLink to="/form" activeClassName="active">
                   <span className="las la-clipboard-list" />
-                  <small>Forms</small>
+                  <small>Add New Form</small>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/" activeClassName="active">
-                  <span className="las la-tasks" />
-                  <small>Tasks</small>
-                </NavLink>
-              </li>
+            <NavLink to="/view-forms" activeClassName="active">
+              <span className="las la-eye" />
+              <small>View All Forms</small>
+            </NavLink>
+          </li>
             </ul>
           </div>
         </div>

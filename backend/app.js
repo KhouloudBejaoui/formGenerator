@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require('cors')
 const userRoutes = require("./routes/user.routes");
 const adminRoutes = require("./routes/admin.routes");
+const formRoutes = require("./routes/form.routes");
 var dotenv = require('dotenv');
 
 const app = express()
@@ -31,6 +32,7 @@ app.get("/",(req,res)=>{
 
 userRoutes(app);
 adminRoutes(app);
+formRoutes(app);
 
 dotenv.config();
 

@@ -9,16 +9,19 @@ import Profile from './pages/profile/Profile';
 import Form from './pages/Form/Form';
 import Userform from './pages/Form/userForm';
 import Register from './pages/auth/register';
+import ViewForms from './pages/Form/viewForms';
 
 const Routing = () => {
   return (
     <Routes>
       <Route path="login" element={<Login />} /> 
       <Route path="/register" element={<Register/>} /> 
+
       <Route path="/" element={<Base><Content/></Base>} />
       <Route path="/profile" element={<Base><Profile/></Base>} />
       <Route path="/users" element={<Base><User/></Base>} />
       <Route path="/form" element={<Base><Form/></Base>} /> 
+      <Route path="/view-forms" element={<Base><ViewForms/></Base>}/>
       <Route path="/Userform" element={<Base><Userform/></Base>} /> 
       
     </Routes>

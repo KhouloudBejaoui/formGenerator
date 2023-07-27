@@ -1,0 +1,61 @@
+.bodyV {
+    display: flex;
+    background: #f1f4f9;
+}
+
+.main {
+    margin: 2%;
+}
+
+.card {
+    width: 20%;
+    display: inline-block;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    background: #fff;
+    border-radius: 5px;
+    margin: 2%;
+}
+
+.image img {
+    width: 100%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+
+}
+
+.title {
+
+    text-align: center;
+    padding: 10px;
+
+}
+
+.h1V {
+    font-size: 20px;
+}
+
+.des {
+    padding: 3px;
+    text-align: center;
+
+    padding-top: 10px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.buttonV {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.buttonV:hover {
+    background-color: black;
+    color: white;
+    transition: .5s;
+    cursor: pointer;
+}
+

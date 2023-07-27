@@ -1,4 +1,5 @@
-import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC } from "./types";
+import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM } from "./types";
+import formDataService from "../../services/form.service";
 
 
 export const setQuestions = (questions) => ({
@@ -20,4 +21,48 @@ export const setQuestions = (questions) => ({
     type: SET_DOC_DESC,
     doc_desc,
   });
+
+
+  export const saveForm = (formData) => {
+    return async (dispatch) => {
+      try {
+        // Call the formDataService.saveForm method to save the form data
+        const response = await formDataService.saveForm(formData);
   
+        // Return the response data
+        return response.data;
+      } catch (error) {
+        // Handle the error, dispatch an action if needed
+        console.error('Error while saving the form:', error);
+        throw error;
+      }
+    };
+  };
+
+  export const retrieveForms = () => async (dispatch) => {
+    try {
+      const res = await formDataService.getAllFormsFromDB();
+  
+      dispatch({
+        type: RETRIEVE_FORMS,
+        payload: res.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  export const deleteForm = (formId) => async (dispatch) => {
+    try {
+      // Send a request to the backend to delete the form with the given formId
+      await formDataService.deleteForm(formId);
+  
+      // After successful deletion, dispatch the action to remove the form from the Redux store
+      dispatch({
+        type: DELETE_FORM,
+        payload: formId,
+      });
+    } catch (error) {
+      console.error('Error while deleting form:', error);
+    }
+  };
