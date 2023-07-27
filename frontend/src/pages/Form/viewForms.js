@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styles from "./viewForm.module.css"
 import formImage from "../../assets/images/form.png"
 import { useNavigate } from 'react-router-dom';
-import { retrieveForms,deleteForm } from '../../redux/actions/form';
+import { retrieveForms, deleteForm } from '../../redux/actions/form';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Modal from 'react-modal';
 
 const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
   const navigate = useNavigate();
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [formIdToDelete, setFormIdToDelete] = useState(null); // Store the id of the form to delete
 
   useEffect(() => {
     // Fetch the list of forms from the Redux store when the component mounts
@@ -17,8 +21,17 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
   const handleDeleteForm = (formId) => {
     deleteForm(formId);
     navigate('/view-forms'); // Redirect to the updated page after deletion
+    handleClosePopup(); // Close the popup after deleting the form
   };
 
+  const showAlert = (formId) => {
+    setPopupVisible(true);
+    setFormIdToDelete(formId); // Set the formIdToDelete when the delete icon is clicked
+  };
+
+  const handleClosePopup = () => {
+    setPopupVisible(false);
+  };
   return (
     <main>
       <div className="page-header">
@@ -52,20 +65,39 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
                     View Form
                   </button>
                 </div>
-                <div className={styles.deleteIcon} onClick={() => handleDeleteForm(id)}>
-                <DeleteIcon />
-              </div>
+                <div className={styles.deleteIcon} onClick={() => showAlert(id)}>
+                  <DeleteIcon />
+                </div>
               </div>
             );
           })}
         </div>
       </div>
+      {/* Modal Popup */}
+      <Modal
+        isOpen={isPopupVisible}
+        onRequestClose={handleClosePopup}
+        contentLabel="Form Saved Successfully"
+        className={styles.popupContainer} // Use the classname from your CSS module for the popup container
+        overlayClassName={styles.popupOverlay} // Use the classname from your CSS module for the popup overlay
+      >
+        <h2 className={styles.popupTitle}>Delete Form</h2>
+        <p className={styles.popupMessage}>Are you sure you want to delete this form?</p>
+        <div className={styles.popupButtons}>
+          <button className={`${styles.popupButton} ${styles.popupButtonPrimary}`} onClick={() => handleDeleteForm(formIdToDelete)}>
+            Delete
+          </button>
+          <button className={`${styles.popupButton} ${styles.popupButtonSecondary}`} onClick={handleClosePopup}>
+            Cancel
+          </button>
+        </div>
+      </Modal>
     </main>
   );
 };
 
 const mapStateToProps = (state) => ({
-  forms: state.form.forms, 
+  forms: state.form.forms,
 });
 
 const mapDispatchToProps = {
