@@ -18,6 +18,10 @@ class formDataService {
   deleteForm(id) {
     return http.delete(`/forms/${id}`);
   }
+
+  getForm(id){
+    return http.get(`/forms/get_form_json/${id}`);
+  }
 }
 
 export default new formDataService();

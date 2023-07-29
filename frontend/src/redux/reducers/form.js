@@ -1,4 +1,4 @@
-import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC, RETRIEVE_FORMS, DELETE_FORM } from "../actions/types";
+import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC, RETRIEVE_FORMS, DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE } from "../actions/types";
 
 export const initialState = {
     questions: [{ questionText: "Question", questionType: "radio", options: [{ optionText: "Option 1" }], open: true, required: false }],
@@ -6,6 +6,9 @@ export const initialState = {
     doc_name: "Untitled form",
     doc_desc: "add the description",
     forms: [],
+    formDetails: {},
+    loading: false,
+    error: null,
 }
 
 const formReducer = (state = initialState, action) => {
@@ -35,6 +38,18 @@ const formReducer = (state = initialState, action) => {
             return {
                 ...state,
                 forms: state.forms.filter((form) => form.id !== action.payload),
+            };
+        case GET_FORM_DETAILS_SUCCESS:
+            return {
+                ...state,
+                formDetails: action.payload, // Make sure that action.payload includes the questions array
+                error: null,
+            };
+        case GET_FORM_DETAILS_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
             };
         default:
             return state;

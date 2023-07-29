@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styles from "./viewForm.module.css"
 import formImage from "../../assets/images/form.png"
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { retrieveForms, deleteForm } from '../../redux/actions/form';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Modal from 'react-modal';
 
 const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
   const navigate = useNavigate();
-
   const [isPopupVisible, setPopupVisible] = useState(false);
-  const [formIdToDelete, setFormIdToDelete] = useState(null); // Store the id of the form to delete
+  const [formIdToDelete, setFormIdToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch the list of forms from the Redux store when the component mounts
@@ -32,6 +31,10 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
   const handleClosePopup = () => {
     setPopupVisible(false);
   };
+
+  // Sort the forms by date of creation (createdAt)
+  const sortedForms = forms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   return (
     <main>
       <div className="page-header">
@@ -40,13 +43,17 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
       </div>
       <div className={styles.bodyV}>
         <div className={styles.main}>
-          {forms.map((form) => {
-            // Access the form details from the forms array
-            const { id, documentName, documentDescription } = form;
-            console.log(id);
+          {sortedForms.map((form) => {
+            const { id, documentName, documentDescription, createdAt } = form;
+            // Format the date to be more human-readable (e.g., "July 28, 2023")
+            const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+
             return (
               <div key={id} className={styles.card}>
-                {/* Render the form details in the card */}
                 <div className={styles.image}>
                   <img src={formImage} alt="Form" />
                 </div>
@@ -54,11 +61,10 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
                   <h1 className={styles.h1V}>{documentName}</h1>
                 </div>
                 <div className={styles.des}>
-                  <p>{documentDescription}</p>
+                  <p>{formattedDate}</p>
                   <button
                     className={styles.buttonV}
                     onClick={() => {
-                      // Redirect to the individual form view page (replace 'formId' with the appropriate route)
                       navigate(`/view-form/${id}`);
                     }}
                   >
@@ -77,7 +83,7 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
       <Modal
         isOpen={isPopupVisible}
         onRequestClose={handleClosePopup}
-        contentLabel="Form Saved Successfully"
+        contentLabel="Delete Form"
         className={styles.popupContainer} // Use the classname from your CSS module for the popup container
         overlayClassName={styles.popupOverlay} // Use the classname from your CSS module for the popup overlay
       >

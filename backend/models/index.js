@@ -27,14 +27,13 @@ db.Option = require("./option.model.js")(sequelize,Sequelize);
 
 // Define the relationship between tables
 db.Form.hasMany(db.Question, { as: 'questions', foreignKey: 'formId' });
-db.Question.belongsTo(db.Form, { foreignKey: 'formId' });
+db.Question.belongsTo(db.Form, { foreignKey: 'formId' ,as: 'form' });
 
 db.Question.hasMany(db.Option, {
   foreignKey: 'questionId',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
+  as: 'options' 
 });
-db.Option.belongsTo(db.Question, { foreignKey: 'questionId' });
+db.Option.belongsTo(db.Question, { foreignKey: 'questionId',as: 'question'  });
 
 
 module.exports = db;

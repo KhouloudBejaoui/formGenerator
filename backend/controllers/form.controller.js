@@ -65,9 +65,9 @@ exports.saveForm = async (req, res) => {
         // Convert the form data to JSON string
         const jsonData = JSON.stringify(formData, null, 2);
 
-        // Save the JSON data to a file in the "data" folder
-        const fileName = `${form.documentName}.json`;
-        fs.writeFileSync(`data/${fileName}`, jsonData);
+        // Save the JSON data to a file in the "data" folder with the form ID as the filename
+        const fileName = `${form.id}.json`;
+        fs.writeFileSync(path.join(__dirname, '../data', fileName), jsonData);
 
         return res.status(201).send({ success: true, message: 'Form and questions saved successfully.' });
     } catch (error) {
@@ -77,6 +77,7 @@ exports.saveForm = async (req, res) => {
         });
     }
 };
+
 
 // Function to get all the files from the "data" folder
 exports.getAllFiles = (req, res) => {
@@ -128,25 +129,52 @@ exports.getFormById = async (req, res) => {
     }
 };
 
+// Function to delete a form from the database and the data folder by its ID
 exports.deleteFormById = async (req, res) => {
     const { formId } = req.params;
 
     try {
         // Find the form in the database by its ID
-        const form = await Form.findOne({ where: { id: formId } });
+        const form = await Form.findOne({
+            where: { id: formId },
+            include: [
+                {
+                    model: Question,
+                    as: 'questions',
+                    include: [
+                        {
+                            model: Option,
+                            as: 'options',
+                        },
+                    ],
+                },
+            ],
+        });
 
         if (!form) {
             return res.status(404).json({ message: 'Form not found' });
+        }
+
+        // Delete the options associated with each question
+        for (const question of form.questions) {
+            for (const option of question.options) {
+                await option.destroy();
+            }
+        }
+
+        // Delete the questions associated with the form
+        for (const question of form.questions) {
+            await question.destroy();
         }
 
         // Delete the form from the database
         await form.destroy();
 
         // Get the filename from the documentName property of the form
-        const filename = `${form.documentName}.json`;
+        const filename = `${formId}.json`;
 
         // Construct the file path to the JSON file in the data folder
-        const filePath = path.join(__dirname, '../data', filename);
+        const filePath = path.join(__dirname, `../data/${filename}`);
 
         // Check if the file exists before attempting to delete it
         if (fs.existsSync(filePath)) {
@@ -154,9 +182,52 @@ exports.deleteFormById = async (req, res) => {
             fs.unlinkSync(filePath);
         }
 
-        res.status(200).json({ message: 'Form deleted successfully' });
+        res.status(200).json({ message: 'Form, questions, and options deleted successfully' });
     } catch (error) {
         console.error('Error while deleting form:', error);
         res.status(500).json({ message: 'Error while deleting form' });
     }
 };
+
+
+// Function to get form data from JSON file by formId
+exports.getFormFromJSON = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Find the form in the database by its ID
+        const form = await Form.findByPk(id);
+
+        if (!form) {
+            // If the form with the specified ID is not found, send a 404 Not Found response
+            return res.status(404).send({ message: 'Form not found.' });
+        }
+
+        // Construct the file path to the JSON file in the data folder
+        const filePath = path.join(__dirname, `../data/${id}.json`);
+
+        // Read the JSON file
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                console.error('Error while reading JSON file:', err);
+                return res.status(500).send({ message: 'Error while reading JSON file.' });
+            }
+
+            try {
+                // Parse the JSON data
+                const formData = JSON.parse(data);
+
+                // Send the form data as a response
+                res.send(formData);
+            } catch (error) {
+                console.error('Error while parsing JSON data:', error);
+                res.status(500).send({ message: 'Error while parsing JSON data.' });
+            }
+        });
+    } catch (error) {
+        console.error('Error while fetching form from the database:', error);
+        res.status(500).send({ message: 'Error while fetching form from the database.' });
+    }
+};
+
+

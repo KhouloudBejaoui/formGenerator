@@ -1,4 +1,4 @@
-import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM } from "./types";
+import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE} from "./types";
 import formDataService from "../../services/form.service";
 
 
@@ -22,6 +22,15 @@ export const setQuestions = (questions) => ({
     doc_desc,
   });
 
+  export const getFormDetailsSuccess = (formDetails) => ({
+    type: GET_FORM_DETAILS_SUCCESS,
+    payload: formDetails,
+  });
+  
+  export const getFormDetailsFailure = (error) => ({
+    type: GET_FORM_DETAILS_FAILURE,
+    payload: error,
+  });
 
   export const saveForm = (formData) => {
     return async (dispatch) => {
@@ -64,5 +73,14 @@ export const setQuestions = (questions) => ({
       });
     } catch (error) {
       console.error('Error while deleting form:', error);
+    }
+  };
+
+  export const getFormDetails = (formId) => async (dispatch) => {
+    try {
+      const response = await formDataService.getForm(formId);
+      dispatch(getFormDetailsSuccess(response.data));
+    } catch (error) {
+      dispatch(getFormDetailsFailure(error.message));
     }
   };

@@ -7,6 +7,7 @@ module.exports = app => {
   router.get("/get_all_files", form.getAllFiles);
   router.get("/get_all_forms", form.getAllFormsFromDB);
   router.get('/get_form/:id', form.getFormById);
+  router.get('/get_form_json/:id', form.getFormFromJSON);
   router.delete('/:formId', form.deleteFormById);
 
   app.use('/api/forms', router);
