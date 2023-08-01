@@ -10,5 +10,7 @@ module.exports = app => {
   router.get('/get_form_json/:id', form.getFormFromJSON);
   router.delete('/:formId', form.deleteFormById);
 
+  router.post('/response', form.saveUserResponseAndExport);
+
   app.use('/api/forms', router);
 };

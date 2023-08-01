@@ -1,82 +1,95 @@
 const db = require("../models");
 const Form = db.Form;
+const Response = db.Response;
+const Response_Item = db.Response_Item;
 const Question = db.Question;
 const Option = db.Option;
 const fs = require('fs');
 const path = require('path');
+const Excel = require('exceljs');
+
 
 // Function to save a new form and its questions in the database
 exports.saveForm = async (req, res) => {
     try {
-        // Validate request
-        if (!req.body.document_name || !req.body.doc_desc || !req.body.questions) {
-            return res.status(400).send({
-                message: 'document_name, doc_desc, and questions are required fields.',
-            });
-        }
-
-        const { document_name, doc_desc, questions } = req.body;
-
-        // Save the form to the database
-        const form = await Form.create({
-            documentName: document_name,
-            documentDescription: doc_desc,
+      // Validate request
+      if (!req.body.document_name || !req.body.doc_desc || !req.body.questions) {
+        return res.status(400).send({
+          message: 'document_name, doc_desc, and questions are required fields.',
         });
-
-        // Save the questions to the database and associate them with the form
-        for (const questionData of questions) {
-            const { questionText, questionType, answer, answerKey, points, open, required, options } = questionData;
-
-            // Save the question to the database and associate it with the form
-            const question = await Question.create({
-                questionText,
-                questionType,
-                answer,
-                answerKey,
-                points,
-                open,
-                required,
-                formId: form.id, // Set the foreign key 'FormId'
+      }
+  
+      const { document_name, doc_desc, questions } = req.body;
+  
+      // Save the form to the database
+      const form = await Form.create({
+        documentName: document_name,
+        documentDescription: doc_desc,
+      });
+  
+      // Array to store the updated questions with questionId
+      const updatedQuestions = [];
+  
+      // Save the questions to the database and associate them with the form
+      for (const questionData of questions) {
+        const { questionText, questionType, answer, answerKey, points, open, required, options } = questionData;
+  
+        // Save the question to the database and associate it with the form
+        const question = await Question.create({
+          questionText,
+          questionType,
+          answer,
+          answerKey,
+          points,
+          open,
+          required,
+          formId: form.id, // Set the foreign key 'FormId'
+        });
+  
+        // Save options for the question and associate them with the question
+        const savedOptions = [];
+        if (options && options.length > 0) {
+          for (const option of options) {
+            const { optionText } = option;
+            const createdOption = await Option.create({
+              optionText,
+              questionId: question.id, // Set the foreign key 'QuestionId'
             });
-
-            // Save options for the question and associate them with the question
-            if (options && options.length > 0) {
-                for (const option of options) {
-                    const { optionText } = option;
-                    const createdOption = await Option.create({
-                        optionText,
-                        questionId: question.id, // Set the foreign key 'QuestionId'
-                    });
-
-                    // Update the foreign key in the options object
-                    option.QuestionId = createdOption.QuestionId;
-                }
-            }
+  
+            savedOptions.push({ ...option, optionId: createdOption.id }); // Add the optionId to the option object
+          }
         }
-
-        // Create a JSON object representing the form data
-        const formData = {
-            formId: form.id,
-            documentName: document_name,
-            documentDescription: doc_desc,
-            questions,
-        };
-
-        // Convert the form data to JSON string
-        const jsonData = JSON.stringify(formData, null, 2);
-
-        // Save the JSON data to a file in the "data" folder with the form ID as the filename
-        const fileName = `${form.id}.json`;
-        fs.writeFileSync(path.join(__dirname, '../data', fileName), jsonData);
-
-        return res.status(201).send({ success: true, message: 'Form and questions saved successfully.' });
+  
+        // Add the questionId and options to the question object
+        const updatedQuestion = { ...questionData, questionId: question.id, options: savedOptions };
+        updatedQuestions.push(updatedQuestion);
+      }
+  
+      // Create a JSON object representing the form data
+      const formData = {
+        formId: form.id,
+        documentName: document_name,
+        documentDescription: doc_desc,
+        questions: updatedQuestions, // Use the updated questions array with questionId and options
+      };
+  
+      // Convert the form data to JSON string
+      const jsonData = JSON.stringify(formData, null, 2);
+  
+      // Save the JSON data to a file in the "data" folder with the form ID as the filename
+      const fileName = `${form.id}.json`;
+      fs.writeFileSync(path.join(__dirname, '../data', fileName), jsonData);
+  
+      return res.status(201).send({ success: true, message: 'Form and questions saved successfully.' });
     } catch (error) {
-        console.error('Error while saving form:', error);
-        res.status(500).send({
-            message: 'An error occurred while saving the form.',
-        });
+      console.error('Error while saving form:', error);
+      res.status(500).send({
+        message: 'An error occurred while saving the form.',
+      });
     }
-};
+  };
+  
+  
 
 
 // Function to get all the files from the "data" folder
@@ -108,7 +121,7 @@ exports.getAllFormsFromDB = async (req, res) => {
     }
 };
 
-// Function to get a form from the database by its ID
+// Function to get a form without details from the database by its ID
 exports.getFormById = async (req, res) => {
     const { id } = req.params;
 
@@ -231,3 +244,63 @@ exports.getFormFromJSON = async (req, res) => {
 };
 
 
+
+// Function to save a user's response and export it to an Excel file
+exports.saveUserResponseAndExport = async (req, res) => {
+    const { userId, formId, questions } = req.body;
+    console.log('Received data from frontend:', req.body);
+    try {
+        // Save the user's response to the database
+        const response = await Response.create({
+            userId,
+            formId,
+        });
+
+        // Save the individual response items to the database
+        const responseItems = questions.map(({ questionId, optionId, textResponse }) => ({
+            responseId: response.id,
+            questionId,
+            optionId,
+            textResponse, // Include the textResponse field for text-based responses
+        }));
+        await Response_Item.bulkCreate(responseItems);
+
+        // Prepare the data for export to Excel
+        const excelData = questions.map(({ questionId, optionId, textResponse }) => {
+            return {
+                Question: questionId,
+                Answer: optionId ? optionId : textResponse, // Use optionId if available, otherwise use textResponse
+            };
+        });
+
+        // Export data to Excel
+        const workbook = new Excel.Workbook();
+        const worksheet = workbook.addWorksheet(`Response-${response.id}`);
+
+        worksheet.columns = [
+            { header: 'Question', key: 'Question' },
+            { header: 'Answer', key: 'Answer' },
+        ];
+
+        excelData.forEach((data) => {
+            worksheet.addRow(data);
+        });
+
+        // Set the appropriate headers for file download
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=Response-${response.id}.xlsx`);
+
+        // Send the Excel file as a response
+        workbook.xlsx.write(res)
+            .then(() => {
+                res.end();
+            })
+            .catch((error) => {
+                console.error('Error exporting to Excel:', error);
+                res.status(500).send('Error exporting to Excel');
+            });
+    } catch (error) {
+        console.error('Error while saving user response and exporting to Excel:', error);
+        res.status(500).send({ message: 'Error while saving user response and exporting to Excel.' });
+    }
+};

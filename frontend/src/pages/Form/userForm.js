@@ -4,11 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormDetails } from '../../redux/actions/form';
 import axios from "axios";
-import styles from "./userForm.module.css";
+import styles from "./userForm.module.css"; // Add the import for styles
+import formDataService from "../../services/form.service";
 
 function Userform() {
   const [answer, setAnswer] = useState([]);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Add the missing 'navigate' variable
   const { formId } = useParams();
   const isLoading = useSelector((state) => state.form.loading);
   const error = useSelector((state) => state.form.error);
@@ -17,21 +18,23 @@ function Userform() {
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
-  }, [dispatch, formId]);
+}, [dispatch, formId]);
 
-  useEffect(() => {
+useEffect(() => {
     if (formDetails && formDetails.questions) {
-      // Initialize the answer state based on the questions structure from formDetails
-      setAnswer(
-        formDetails.questions.map((question) => ({
-          question: question.questionText,
-          answer: '', // Initialize with an empty string for single-choice questions
-        }))
-      );
+        // Initialize the answer state based on the questions structure from formDetails
+        setAnswer(
+            formDetails.questions.map((question) => ({
+                question: question.questionText,
+                answer: '',
+            }))
+        );
     }
-  }, [formDetails]);
+}, [formDetails]);
+
 
   const { questions = [], documentName, documentDescription } = formDetails || {};
+
 
   function select(que, option) {
     const updatedAnswer = answer.map((ele) => {
@@ -44,57 +47,75 @@ function Userform() {
   }
 
   function selectcheck(e, que, option) {
-    const questionIndex = answer.findIndex((ele) => ele.question === que);
+    var d = [];
+    var k = answer.findIndex((ele) => ele.question === que);
 
-    if (questionIndex === -1) {
-      // If the question is not found in the answer state, create a new entry for it
-      setAnswer([...answer, { question: que, answer: [option] }]);
-      return;
+    if (!answer[k].answer) {
+      answer[k].answer = '';
     }
 
-    const existingAnswer = answer[questionIndex].answer || [];
-    const optionIndex = existingAnswer.indexOf(option);
+    if (answer[k].answer) {
+      d = answer[k].answer.split(',');
+    }
 
-    if (e) {
-      // If the option is selected (checked), add it to the existing answer
-      if (optionIndex === -1) {
-        existingAnswer.push(option);
-      }
+    if (e === true) {
+      d.push(option);
     } else {
-      // If the option is unselected (unchecked), remove it from the existing answer
-      if (optionIndex !== -1) {
-        existingAnswer.splice(optionIndex, 1);
-      }
+      var n = d.findIndex((el) => el.option === option);
+      d.splice(n, 1);
     }
 
-    const updatedAnswer = [...answer];
-    updatedAnswer[questionIndex].answer = existingAnswer;
-    setAnswer(updatedAnswer);
+    answer[k].answer = d.join(',');
+    setAnswer([...answer]);
   }
 
   function selectinput(que, option) {
-    const questionIndex = answer.findIndex((ele) => ele.question === que);
+    var k = answer.findIndex((ele) => ele.question === que);
 
-    if (questionIndex !== -1) {
-      const updatedAnswer = [...answer];
-      updatedAnswer[questionIndex].answer = option;
-      setAnswer(updatedAnswer);
+    if (!answer[k].answer) {
+      answer[k].answer = '';
     }
+
+    answer[k].answer = option;
+    setAnswer([...answer]);
+
   }
 
-  function submit() {
-    const post_answer_data = {};
-    answer.forEach((ele) => {
-      post_answer_data[ele.question] = ele.answer;
+ // Inside the submit() function
+ async function submit() {
+  const post_answer_data = {};
+  answer.forEach((ele) => {
+    post_answer_data[ele.question] = ele.answer;
+  });
+  console.log('formDetails:', formDetails);
+
+  try {
+    // Send user response to the server to save in the database
+    const response = await formDataService.saveUserResponse({
+      userId: 1, // Replace with the actual user ID
+      formId: formId, // Use the formId from the URL parameter
+      questions: formDetails.questions.map((question) => {
+        console.log("questionId:", question.questionId); // Log the questionId
+        
+        // Find the selected option in the options array and get its optionId
+        const selectedOption = question.options.find((option) => option.optionText === post_answer_data[question.questionText]);
+        const optionId = selectedOption ? selectedOption.optionId : null;
+
+        return {
+          questionId: question.questionId,
+          optionId: optionId, // Pass the optionId
+          textResponse: post_answer_data[question.questionText],
+        };
+      }),
     });
 
-    axios.post(`http://localhost:9010/user_response/${documentName}`, {
-      column: questions.map((q) => q.questionText),
-      answer_data: [post_answer_data],
-    });
-
-    navigate(`/submitted`);
+    navigate(`/`);
+  } catch (error) {
+    console.error('Error saving user response:', error);
   }
+}
+
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -135,21 +156,20 @@ function Userform() {
                                 value={ques.optionText}
                                 className={styles["form-check-input"]}
                                 required={question.required}
-                                style={{ marginLeft: "5px", marginRight: "5px" }}
+                                style={{ margnLeft: "5px", marginRight: "5px" }}
                                 onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
                               /> {ques.optionText}
-                            </label>
-                          ) : (
+                            </label>) : (
                             <label>
                               <input
                                 type={question.questionType}
                                 name={qindex}
-                                value={ques.optionText} /*lezm nahiha wala value={answer[qindex].answer} */
+                                /*value={ques.optionText}   value={answer[qindex].answer} */
                                 className={styles["form-check-input"]}
                                 required={question.required}
-                                style={{ marginLeft: "5px", marginRight: "5px" }}
+                                style={{ margnLeft: "5px", marginRight: "5px" }}
                                 onChange={(e) => { selectinput(question.questionText, e.target.value) }}
-                              />
+                              /> {ques.optionText}
                             </label>
                           )
                         ) : (
@@ -160,7 +180,7 @@ function Userform() {
                               value={ques.optionText}
                               className={styles["form-check-input"]}
                               required={question.required}
-                              style={{ marginLeft: "5px", marginRight: "5px" }}
+                              style={{ margnLeft: "5px", marginRight: "5px" }}
                               onChange={() => { select(question.questionText, ques.optionText) }}
                             />
                             {ques.optionText}

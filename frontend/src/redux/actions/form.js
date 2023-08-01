@@ -84,3 +84,20 @@ export const setQuestions = (questions) => ({
       dispatch(getFormDetailsFailure(error.message));
     }
   };
+
+
+  export const submitUserResponse = (responseData) => {
+    return async (dispatch) => {
+      try {
+        // Call the formDataService.saveForm method to save the form data
+        const response = await formDataService.saveUserResponse(responseData);
+  
+        // Return the response data
+        return response.data;
+      } catch (error) {
+        // Handle the error, dispatch an action if needed
+        console.error('Error while saving the response:', error);
+        throw error;
+      }
+    };
+  };

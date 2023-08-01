@@ -22,6 +22,10 @@ class formDataService {
   getForm(id){
     return http.get(`/forms/get_form_json/${id}`);
   }
+
+  saveUserResponse(responseData){
+    return http.post("/forms/response",responseData);
+  }
 }
 
 export default new formDataService();
