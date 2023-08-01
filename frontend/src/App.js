@@ -10,6 +10,7 @@ import Form from './pages/Form/Form';
 import Userform from './pages/Form/userForm';
 import Register from './pages/auth/register';
 import ViewForms from './pages/Form/viewForms';
+import FormDetails from './pages/Form/formDetails';
 
 const Routing = () => {
   return (
@@ -22,8 +23,8 @@ const Routing = () => {
       <Route path="/users" element={<Base><User/></Base>} />
       <Route path="/form" element={<Base><Form/></Base>} /> 
       <Route path="/view-forms" element={<Base><ViewForms/></Base>}/>v
-      <Route path="/view-form/:formId" element={<Base><Userform /></Base>} />
-      <Route path="/Userform" element={<Base><Userform/></Base>} /> 
+      <Route path="/view-form/:formId" element={<Base><FormDetails /></Base>} />
+      <Route path="/Userform/:formId" element={<Userform/>} /> 
       
     </Routes>
   )

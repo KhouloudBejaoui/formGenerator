@@ -128,8 +128,8 @@ useEffect(() => {
   return (
     <main>
       <div className="page-header">
-        <h1>Forms</h1>
-        <small>Home / View Form</small>
+        <h1>Form</h1>
+        <small>Please try to answer to this form</small>
       </div>
       <div className={styles.submit}>
         <div className={styles.user_form}>
