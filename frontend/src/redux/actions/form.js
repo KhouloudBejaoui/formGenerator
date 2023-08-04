@@ -1,6 +1,6 @@
 import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE} from "./types";
 import formDataService from "../../services/form.service";
-
+import responseDataService from "../../services/response.service";
 
 export const setQuestions = (questions) => ({
     type: SET_QUESTIONS,
@@ -90,7 +90,7 @@ export const setQuestions = (questions) => ({
     return async (dispatch) => {
       try {
         // Call the formDataService.saveForm method to save the form data
-        const response = await formDataService.saveUserResponse(responseData);
+        const response = await responseDataService.saveUserResponse(responseData);
   
         // Return the response data
         return response.data;

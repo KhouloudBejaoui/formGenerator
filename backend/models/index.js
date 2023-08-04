@@ -31,31 +31,21 @@ db.Response_Item = require("./response_item.model.js")(sequelize, Sequelize);
 db.Form.hasMany(db.Question, { as: 'questions', foreignKey: 'formId' });
 db.Question.belongsTo(db.Form, { foreignKey: 'formId', as: 'form' });
 
-db.Question.hasMany(db.Option, {
-  foreignKey: 'questionId',
-  as: 'options'
-});
+db.Question.hasMany(db.Option, { foreignKey: 'questionId', as: 'options' });
 db.Option.belongsTo(db.Question, { foreignKey: 'questionId', as: 'question' });
 
 db.Form.hasMany(db.Response, { as: 'responses', foreignKey: 'formId' });
 db.users.hasMany(db.Response, { as: 'responses', foreignKey: 'userId' });
 
-db.Question.belongsToMany(db.Response, {
-  through: db.Response_Item,
-  foreignKey: 'questionId',
-  otherKey: 'responseId',
-  as: 'responses',
-});
+db.Question.belongsToMany(db.Response, { through: db.Response_Item, foreignKey: 'questionId', as: 'responses', });
+db.Response.belongsToMany(db.Question, { through: db.Response_Item, foreignKey: 'responseId', as: 'questions', });
+db.Response_Item.belongsTo(db.Question, { foreignKey: 'questionId', as: 'question' });
 
 db.Response.belongsTo(db.users, { foreignKey: 'userId' });
 db.Response.belongsTo(db.Form, { foreignKey: 'formId' });
-db.Response.belongsToMany(db.Question, {
-  through: 'response_item',
-  foreignKey: 'responseId',
-  otherKey: 'questionId',
-  as: 'questions',
-});
 
+db.Response.hasMany(db.Response_Item, { foreignKey: 'responseId', as: 'responseItems' });
+db.Response_Item.belongsTo(db.Response, { foreignKey: 'responseId', as: 'response' });
 
 
 

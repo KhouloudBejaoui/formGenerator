@@ -60,11 +60,11 @@ const Sidebar = ({ adminDetails }) => {
                 </NavLink>
               </li>
               <li>
-            <NavLink to="/view-forms" activeClassName="active">
-              <span className="las la-eye" />
-              <small>View All Forms</small>
-            </NavLink>
-          </li>
+                <NavLink to="/view-forms" activeClassName="active">
+                  <span className="las la-eye" />
+                  <small>View All Forms</small>
+                </NavLink>
+              </li>
             </ul>
           </div>
         </div>

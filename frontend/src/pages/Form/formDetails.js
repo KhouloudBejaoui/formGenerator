@@ -9,7 +9,7 @@ import formDataService from "../../services/form.service";
 
 function FormDetails() {
   const [answer, setAnswer] = useState([]);
-  const navigate = useNavigate(); // Add the missing 'navigate' variable
+  const navigate = useNavigate();
   const { formId } = useParams();
   const isLoading = useSelector((state) => state.form.loading);
   const error = useSelector((state) => state.form.error);
@@ -18,23 +18,27 @@ function FormDetails() {
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
-}, [dispatch, formId]);
+  }, [dispatch, formId]);
 
-useEffect(() => {
+  useEffect(() => {
     if (formDetails && formDetails.questions) {
-        // Initialize the answer state based on the questions structure from formDetails
-        setAnswer(
-            formDetails.questions.map((question) => ({
-                question: question.questionText,
-                answer: '',
-            }))
-        );
+      // Initialize the answer state based on the questions structure from formDetails
+      setAnswer(
+        formDetails.questions.map((question) => ({
+          question: question.questionText,
+          answer: '',
+        }))
+      );
     }
-}, [formDetails]);
+  }, [formDetails]);
 
 
   const { questions = [], documentName, documentDescription } = formDetails || {};
 
+  // Function to navigate to the response page for the current form
+  const handleShowResponse = () => {
+    navigate(`/response/${formId}`);
+  };
 
   function select(que, option) {
     const updatedAnswer = answer.map((ele) => {
@@ -81,10 +85,10 @@ useEffect(() => {
 
   }
 
- // Inside the submit() function
- async function submit() {
+  // Inside the submit() function
+  async function submit() {
 
-}
+  }
 
 
 
@@ -169,9 +173,14 @@ useEffect(() => {
             <div className={styles.user_footer}>
               IACE Forms
             </div>
+
           </div>
+          <Button variant="contained" color="primary" onClick={handleShowResponse}>
+            Show Response
+          </Button>
         </div>
       </div>
+
     </main>
   );
 }

@@ -11,6 +11,7 @@ import Userform from './pages/Form/userForm';
 import Register from './pages/auth/register';
 import ViewForms from './pages/Form/viewForms';
 import FormDetails from './pages/Form/formDetails';
+import ResponseExport from './pages/response/ResponseExport';
 
 const Routing = () => {
   return (
@@ -25,7 +26,8 @@ const Routing = () => {
       <Route path="/view-forms" element={<Base><ViewForms/></Base>}/>v
       <Route path="/view-form/:formId" element={<Base><FormDetails /></Base>} />
       <Route path="/Userform/:formId" element={<Userform/>} /> 
-      
+      <Route path="/response/:formId" element={<Base><ResponseExport/></Base>} /> 
+
     </Routes>
   )
 }

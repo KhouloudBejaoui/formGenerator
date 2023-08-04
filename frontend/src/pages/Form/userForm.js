@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFormDetails } from '../../redux/actions/form';
 import axios from "axios";
 import styles from "./userForm.module.css"; // Add the import for styles
-import formDataService from "../../services/form.service";
+import responseDataService from "../../services/response.service";
 
 function Userform() {
   const [answer, setAnswer] = useState([]);
@@ -91,7 +91,7 @@ useEffect(() => {
 
   try {
     // Send user response to the server to save in the database
-    const response = await formDataService.saveUserResponse({
+    const response = await responseDataService.saveUserResponse({
       userId: 1, // Replace with the actual user ID
       formId: formId, // Use the formId from the URL parameter
       questions: formDetails.questions.map((question) => {
