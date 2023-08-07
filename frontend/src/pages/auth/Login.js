@@ -92,7 +92,7 @@ const Login = ({ loginAdmin }) => {
             />
             <button className={styles.buttonLogin} type="submit">Submit</button>
             <p className={styles.pLogin}>
-              <Link className={styles.aLogin} to="/register">Not Registered ?</Link>
+              <Link className={styles.aLogin} to="/register">Not registered ?</Link>
             </p>
           </form>
         </div>

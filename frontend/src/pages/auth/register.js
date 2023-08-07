@@ -4,7 +4,8 @@ import { registerAdmin } from '../../redux/actions/admin';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styles from './login.module.css';
-import login from '../../assets/images/login.png';
+import register from '../../assets/images/register.png';
+import { Link } from 'react-router-dom';
 
 const Register = () =>  {
   const navigate = useNavigate();
@@ -76,11 +77,14 @@ const Register = () =>  {
             <label className={styles.labelLogin}>Password</label>
             <input className={styles.inputLogin} type="password" name="password" value={adminData.password}  onChange={handleChange} placeholder="enter your password!" />
             <button className={styles.buttonLogin} type="submit">Submit</button>
+            <p className={styles.pLogin}>
+              <Link className={styles.aLogin} to="/login">Already registered ?</Link>
+            </p>
             <closeform />
           </form>
         </div>
         <div className={styles.picLogin}>
-          <img src={login} alt="Login" />
+          <img src={register} alt="Login" />
         </div>
       </div>
     </div>

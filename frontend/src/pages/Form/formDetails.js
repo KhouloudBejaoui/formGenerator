@@ -85,10 +85,19 @@ function FormDetails() {
 
   }
 
-  // Inside the submit() function
-  async function submit() {
 
+  async function submit() {
+    try {
+      // Call the backend API to send emails to all users
+      const response = await formDataService.sendFormEmail(formId);
+      console.log(response.data); // Assuming the response from the backend is { message: 'Emails sent successfully.' }
+      alert('Emails sent successfully.');
+    } catch (error) {
+      console.error('Error sending emails:', error);
+      alert('An error occurred while sending emails.');
+    }
   }
+
 
 
 

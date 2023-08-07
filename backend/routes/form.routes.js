@@ -9,6 +9,7 @@ module.exports = app => {
   router.get('/get_form/:id', form.getFormById);
   router.get('/get_form_json/:id', form.getFormFromJSON);
   router.delete('/:formId', form.deleteFormById);
-
+  router.post('/sendEmail/:formId',form.sendEmailToAllUsers);
+  
   app.use('/api/forms', router);
 };

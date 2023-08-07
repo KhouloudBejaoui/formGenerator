@@ -23,6 +23,10 @@ class formDataService {
     return http.get(`/forms/get_form_json/${id}`);
   }
 
+  sendFormEmail(formId) {
+    return http.post(`/forms/sendEmail/${formId}`);
+  }
+  
 
 }
 

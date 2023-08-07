@@ -1,43 +1,49 @@
 import { REGISTER_SUCCESS, REGISTER_FAILURE, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT, SET_ADMIN_DETAILS } from "../actions/types";
 
 const initialState = {
-    token: null,
-    error: null,
+    auth: {
+        token: null,
+        isAuthenticated: false, 
+        error: null,
+    },
+   
 };
 
 const authReducer = (state = initialState, action) => {
     switch (action.type) {
-        case REGISTER_SUCCESS:
-            return {
-                ...state,
-                token: action.payload,
-                error: null,
-            };
         case LOGIN_SUCCESS:
-            return {
-                ...state,
-                token: action.payload,
-                error: null,
-            };
-        case REGISTER_FAILURE:
-            return {
-                ...state,
-                token: null,
-                error: action.payload,
-            };
-        case LOGIN_FAILURE:
-            return {
-                ...state,
-                token: null,
-                error: action.payload,
-            };
-        case LOGOUT:
-            return {
-                ...state,
-                token: null,
-                error: null,
-            };
-        case SET_ADMIN_DETAILS:
+            case REGISTER_SUCCESS:
+                return {
+                    ...state,
+                    auth: {
+                        ...state.auth,
+                        isAuthenticated: true,
+                    },
+                    token: action.payload,
+                    error: null,
+                };
+            case LOGIN_FAILURE:
+            case REGISTER_FAILURE:
+                return {
+                    ...state,
+                    auth: {
+                        ...state.auth,
+                        isAuthenticated: false,
+                    },
+                    token: null,
+                    error: action.payload,
+                };
+            case LOGOUT:
+                return {
+                    ...state,
+                    auth: {
+                        ...state.auth,
+                        isAuthenticated: false,
+                    },
+                    token: null,
+                    error: null,
+                };
+               case SET_ADMIN_DETAILS:
             return {
                 ...state,
                 adminDetails: action.payload, // Set adminDetails with the payload from the action

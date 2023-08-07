@@ -109,7 +109,7 @@ useEffect(() => {
       }),
     });
 
-    navigate(`/`);
+    navigate(`/done`);
   } catch (error) {
     console.error('Error saving user response:', error);
   }

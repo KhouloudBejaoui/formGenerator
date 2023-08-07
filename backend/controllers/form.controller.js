@@ -1,13 +1,11 @@
 const db = require("../models");
 const Form = db.Form;
-const Response = db.Response;
-const Response_Item = db.Response_Item;
 const Question = db.Question;
 const Option = db.Option;
 const fs = require('fs');
 const path = require('path');
-const Excel = require('exceljs');
-
+const nodemailer = require('nodemailer');
+const User = db.users;
 
 // Function to save a new form and its questions in the database
 exports.saveForm = async (req, res) => {
@@ -243,5 +241,43 @@ exports.getFormFromJSON = async (req, res) => {
     }
 };
 
+exports.sendEmailToAllUsers = async (req, res) => {
+  try {
+      // Replace these credentials with your actual email credentials
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: 'khouloud.bejaoui@etudiant-isi.utm.tn',
+              pass: 'Gm@ngpoi100',
+          },
+      });
 
+      const formId = req.params.formId;
+      const formUrl = `http://localhost:3000/Userform/${formId}`;
 
+      // Fetch all users from your database
+      const users = await User.findAll(); // Fetch users from the database
+
+      // Check if there are any users to send emails to
+      if (!users || users.length === 0) {
+          return res.json({ message: 'No users found. No emails sent.' });
+      }
+
+      // Loop through each user and send the email
+      for (const user of users) {
+          const mailOptions = {
+              from: 'khouloud.bejaoui@etudiant-isi.utm.tn',
+              to: user.email, // User's email
+              subject: 'Form Response Link',
+              text: `Dear ${user.username},\n\nYou can submit your response for the form at the following link: ${formUrl}\n\nBest Regards,\nIACE`,
+          };
+
+          await transporter.sendMail(mailOptions);
+      }
+
+      res.json({ message: 'Emails sent successfully.' });
+  } catch (error) {
+      console.error('Error sending emails:', error);
+      res.status(500).json({ error: 'An error occurred while sending emails.' });
+  }
+};

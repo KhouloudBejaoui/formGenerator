@@ -2,12 +2,9 @@ const db = require("../models");
 const Response = db.Response;
 const Response_Item = db.Response_Item;
 const Question = db.Question;
-const Option = db.Option;
 const User = db.users;
 const Excel = require('exceljs');
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+
 
 // Function to save a user's response and export it to an Excel file
 exports.saveUserResponseAndExport = async (req, res) => {
@@ -130,9 +127,5 @@ exports.saveExcelFile = async (req, res) => {
       res.status(500).json({ error: 'An error occurred while handling the request.' });
     }
   };
-  
-
-
-
 
 
