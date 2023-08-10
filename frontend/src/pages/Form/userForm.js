@@ -8,9 +8,11 @@ import styles from "./userForm.module.css"; // Add the import for styles
 import responseDataService from "../../services/response.service";
 
 function Userform() {
+
+  const [hasAnswered, setHasAnswered] = useState(false);
   const [answer, setAnswer] = useState([]);
   const navigate = useNavigate(); // Add the missing 'navigate' variable
-  const { formId } = useParams();
+  const { userId,formId } = useParams();
   const isLoading = useSelector((state) => state.form.loading);
   const error = useSelector((state) => state.form.error);
   const dispatch = useDispatch();
@@ -18,21 +20,37 @@ function Userform() {
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
-}, [dispatch, formId]);
+  }, [dispatch, formId]);
 
-useEffect(() => {
+  useEffect(() => {
     if (formDetails && formDetails.questions) {
-        // Initialize the answer state based on the questions structure from formDetails
-        setAnswer(
-            formDetails.questions.map((question) => ({
-                question: question.questionText,
-                answer: '',
-            }))
-        );
+      // Initialize the answer state based on the questions structure from formDetails
+      setAnswer(
+        formDetails.questions.map((question) => ({
+          question: question.questionText,
+          answer: '',
+        }))
+      );
     }
-}, [formDetails]);
+  }, [formDetails]);
 
-
+  useEffect(() => {
+    async function checkUserResponse() {
+      try {
+        // Call your service to check if the user has answered
+        const response = await responseDataService.checkResponse(userId, formId);
+        setHasAnswered(response.data.hasAnswered); // Set the hasAnswered state based on the response
+      } catch (error) {
+        console.error('Error checking user response:', error);
+      }
+    }
+  
+    // Call the checkUserResponse function when userId and formId are available
+    if (userId && formId) {
+      checkUserResponse();
+    }
+  }, [userId, formId]);
+  
   const { questions = [], documentName, documentDescription } = formDetails || {};
 
 
@@ -81,41 +99,39 @@ useEffect(() => {
 
   }
 
- // Inside the submit() function
- async function submit() {
-  const post_answer_data = {};
-  answer.forEach((ele) => {
-    post_answer_data[ele.question] = ele.answer;
-  });
-  console.log('formDetails:', formDetails);
-
-  try {
-    // Send user response to the server to save in the database
-    const response = await responseDataService.saveUserResponse({
-      userId: 1, // Replace with the actual user ID
-      formId: formId, // Use the formId from the URL parameter
-      questions: formDetails.questions.map((question) => {
-        console.log("questionId:", question.questionId); // Log the questionId
-        
-        // Find the selected option in the options array and get its optionId
-        const selectedOption = question.options.find((option) => option.optionText === post_answer_data[question.questionText]);
-        const optionId = selectedOption ? selectedOption.optionId : null;
-
-        return {
-          questionId: question.questionId,
-          optionId: optionId, // Pass the optionId
-          textResponse: post_answer_data[question.questionText],
-        };
-      }),
+  // Inside the submit() response function
+  async function submit() {
+    const post_answer_data = {};
+    answer.forEach((ele) => {
+      post_answer_data[ele.question] = ele.answer;
     });
+    console.log('formDetails:', formDetails);
 
-    navigate(`/done`);
-  } catch (error) {
-    console.error('Error saving user response:', error);
+    try {
+      // Send user response to the server to save in the database
+      const response = await responseDataService.saveUserResponse({
+        userId: userId,
+        formId: formId,
+        questions: formDetails.questions.map((question) => {
+          console.log("questionId:", question.questionId); // Log the questionId
+
+          // Find the selected option in the options array and get its optionId
+          const selectedOption = question.options.find((option) => option.optionText === post_answer_data[question.questionText]);
+          const optionId = selectedOption ? selectedOption.optionId : null;
+
+          return {
+            questionId: question.questionId,
+            optionId: optionId, // Pass the optionId
+            textResponse: post_answer_data[question.questionText],
+          };
+        }),
+      });
+
+      navigate(`/done`);
+    } catch (error) {
+      console.error('Error saving user response:', error);
+    }
   }
-}
-
-
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -125,30 +141,55 @@ useEffect(() => {
     return <div>Error: {error}</div>;
   }
 
-  return (
-    <main>
-      <div className="page-header">
-        <h1>Form</h1>
-        <small>Please try to answer to this form</small>
-      </div>
-      <div className={styles.submit}>
-        <div className={styles.user_form}>
-          <div className={styles.user_form_section}>
-            <div className={styles.user_title_section}>
-              <Typography style={{ fontSize: "26px" }}>{documentName}</Typography>
-              <Typography style={{ fontSize: "15px" }}>{documentDescription}</Typography>
-            </div>
-            {questions.map((question, qindex) => (
-              <div key={qindex} className={styles.user_form_questions}>
-                <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
-                  {qindex + 1}.  {question.questionText}
-                </Typography>
-                {question.options.map((ques, index) => (
-                  <div key={index} style={{ marginBottom: "5px" }}>
-                    <div style={{ display: 'flex' }}>
-                      <div className={styles["form-check"]}>
-                        {question.questionType !== "radio" ? (
-                          question.questionType !== 'text' ? (
+  if (!hasAnswered) {
+    return (
+      <main>
+        <div className="page-header">
+          <h1>Form</h1>
+          <small>Please try to answer to this form</small>
+        </div>
+        <div className={styles.submit}>
+          <div className={styles.user_form}>
+            <div className={styles.user_form_section}>
+              <div className={styles.user_title_section}>
+                <Typography style={{ fontSize: "26px" }}>{documentName}</Typography>
+                <Typography style={{ fontSize: "15px" }}>{documentDescription}</Typography>
+              </div>
+              {questions.map((question, qindex) => (
+                <div key={qindex} className={styles.user_form_questions}>
+                  <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
+                    {qindex + 1}.  {question.questionText}
+                  </Typography>
+                  {question.options.map((ques, index) => (
+                    <div key={index} style={{ marginBottom: "5px" }}>
+                      <div style={{ display: 'flex' }}>
+                        <div className={styles["form-check"]}>
+                          {question.questionType !== "radio" ? (
+                            question.questionType !== 'text' ? (
+                              <label>
+                                <input
+                                  type={question.questionType}
+                                  name={qindex}
+                                  value={ques.optionText}
+                                  className={styles["form-check-input"]}
+                                  required={question.required}
+                                  style={{ margnLeft: "5px", marginRight: "5px" }}
+                                  onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
+                                /> {ques.optionText}
+                              </label>) : (
+                              <label>
+                                <input
+                                  type={question.questionType}
+                                  name={qindex}
+                                  /*value={ques.optionText}   value={answer[qindex].answer} */
+                                  className={styles["form-check-input"]}
+                                  required={question.required}
+                                  style={{ margnLeft: "5px", marginRight: "5px" }}
+                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                                /> {ques.optionText}
+                              </label>
+                            )
+                          ) : (
                             <label>
                               <input
                                 type={question.questionType}
@@ -157,52 +198,32 @@ useEffect(() => {
                                 className={styles["form-check-input"]}
                                 required={question.required}
                                 style={{ margnLeft: "5px", marginRight: "5px" }}
-                                onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
-                              /> {ques.optionText}
-                            </label>) : (
-                            <label>
-                              <input
-                                type={question.questionType}
-                                name={qindex}
-                                /*value={ques.optionText}   value={answer[qindex].answer} */
-                                className={styles["form-check-input"]}
-                                required={question.required}
-                                style={{ margnLeft: "5px", marginRight: "5px" }}
-                                onChange={(e) => { selectinput(question.questionText, e.target.value) }}
-                              /> {ques.optionText}
+                                onChange={() => { select(question.questionText, ques.optionText) }}
+                              />
+                              {ques.optionText}
                             </label>
-                          )
-                        ) : (
-                          <label>
-                            <input
-                              type={question.questionType}
-                              name={qindex}
-                              value={ques.optionText}
-                              className={styles["form-check-input"]}
-                              required={question.required}
-                              style={{ margnLeft: "5px", marginRight: "5px" }}
-                              onChange={() => { select(question.questionText, ques.optionText) }}
-                            />
-                            {ques.optionText}
-                          </label>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              ))}
+              <div className={styles.user_form_submit}>
+                <Button variant="contained" color="primary" onClick={submit} style={{ fontSize: "14px" }}>Submit</Button>
               </div>
-            ))}
-            <div className={styles.user_form_submit}>
-              <Button variant="contained" color="primary" onClick={submit} style={{ fontSize: "14px" }}>Submit</Button>
-            </div>
-            <div className={styles.user_footer}>
-              IACE Forms
+              <div className={styles.user_footer}>
+                IACE Forms
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-  );
+      </main>
+    );
+  }
+  else{
+      navigate("/already-submitted");
+  }
 }
 
 export default Userform;

@@ -23,6 +23,9 @@ class responseDataService {
     }
   };
 
+  checkResponse(userId,formId) {
+    return http.get(`/responses/check-response/${userId}/${formId}`);
+  }
 
 }
 

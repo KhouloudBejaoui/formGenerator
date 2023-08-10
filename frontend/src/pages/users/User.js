@@ -41,16 +41,13 @@ const User = ({ users, retrieveUsers }) => {
                 <tr>
                   <th>ID</th>
                   <th>
-                    <span className="las la-sort" /> USER
+                    <span className="las la-sort" /> USERNAME
                   </th>
                   <th>
-                    <span className="las la-sort" /> TOTAL
+                    <span className="las la-sort" /> EMAIL
                   </th>
                   <th>
-                    <span className="las la-sort" /> ISSUED DATE
-                  </th>
-                  <th>
-                    <span className="las la-sort" /> BALANCE
+                    <span className="las la-sort" /> HAS ANSWERED ?
                   </th>
                   <th>
                     <span className="las la-sort" /> ACTIONS
@@ -63,19 +60,17 @@ const User = ({ users, retrieveUsers }) => {
                     <td>#{user.id}</td>
                     <td>
                       <div className="client">
-                        <div
-                          className="client-img bg-img"
-                          style={{ backgroundImage: `url(${avatar})` }}
-                        />
                         <div className="client-info">
                           <h4>{user.username}</h4>
-                          <small>{user.email}</small>
                         </div>
                       </div>
                     </td>
-                    <td>{user.total}</td>
-                    <td>{user.issuedDate}</td>
-                    <td>{user.balance}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <span className={user.hasAnswered ? 'green' : 'red'}>
+                        {user.hasAnswered ? 'true' : 'false'}
+                      </span>
+                    </td>
                     <td>
                       <div className="actions">
                         <span className="lab la-telegram-plane" />

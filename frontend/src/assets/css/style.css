@@ -529,7 +529,14 @@ table tbody tr {
     cursor: pointer;
 }
 
-
+/*user list*/
+.green {
+    color: green;
+  }
+  
+  .red {
+    color: red;
+  }
 
 
 

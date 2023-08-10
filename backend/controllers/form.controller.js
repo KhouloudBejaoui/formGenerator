@@ -325,42 +325,45 @@ exports.getFormFromJSON = async (req, res) => {
 };
 
 exports.sendEmailToAllUsers = async (req, res) => {
-  try {
+    try {
       // Replace these credentials with your actual email credentials
       const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-              user: 'iace.surveymail@gmail.com',
-              pass: 'sovlexpprtmwgula',
-          },
+        service: 'gmail',
+        auth: {
+          user: 'iace.surveymail@gmail.com',
+          pass: 'sovlexpprtmwgula',
+        },
       });
-
+  
       const formId = req.params.formId;
-      const formUrl = `http://localhost:3000/Userform/${formId}`;
-
+      const formUrlBase = 'http://localhost:3000/Userform'; // Base URL
+  
       // Fetch all users from your database
       const users = await User.findAll(); // Fetch users from the database
-
+  
       // Check if there are any users to send emails to
       if (!users || users.length === 0) {
-          return res.json({ message: 'No users found. No emails sent.' });
+        return res.json({ message: 'No users found. No emails sent.' });
       }
-
+  
       // Loop through each user and send the email
       for (const user of users) {
-          const mailOptions = {
-              from: 'iace.surveymail@gmail.com',
-              to: user.email, // User's email
-              subject: 'Form Response Link',
-              text: `Dear ${user.username},\n\nYou can submit your response for the form at the following link: ${formUrl}\n\nBest Regards,\nIACE`,
-          };
-
-          await transporter.sendMail(mailOptions);
+        const userId = user.id; // Get the user's ID
+        const formUrl = `${formUrlBase}/${userId}/${formId}`; // Construct the complete URL
+  
+        const mailOptions = {
+          from: 'iace.surveymail@gmail.com',
+          to: user.email, // User's email
+          subject: 'Form Response Link',
+          text: `Dear ${user.username},\n\nYou can submit your response for the form at the following link: ${formUrl}\n\nBest Regards,\nIACE`,
+        };
+  
+        await transporter.sendMail(mailOptions);
       }
-
+  
       res.json({ message: 'Emails sent successfully.' });
-  } catch (error) {
+    } catch (error) {
       console.error('Error sending emails:', error);
       res.status(500).json({ error: 'An error occurred while sending emails.' });
-  }
-};
+    }
+  };

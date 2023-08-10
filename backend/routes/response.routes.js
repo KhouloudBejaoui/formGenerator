@@ -10,7 +10,7 @@ module.exports = app => {
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
             // Resolve the destination path using path.join()
-            const destinationPath = path.join(__dirname,'../response');
+            const destinationPath = path.join(__dirname, '../response');
             cb(null, destinationPath);
         },
         filename: function (req, file, cb) {
@@ -24,6 +24,8 @@ module.exports = app => {
     router.get('/:formId', response.getResponsesByFormId);
     router.post('/save', response.saveUserResponseAndExport);
     router.post('/saveExcelFile', upload.single('file'), response.saveExcelFile);
-    
+
+    router.get('/check-response/:userId/:formId', response.checkUserResponse);
+
     app.use('/api/responses', router);
 };

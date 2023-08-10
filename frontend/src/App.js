@@ -17,10 +17,9 @@ import Error from './components/error';
 import PrivateRoute from './components/PrivateRoute';
 import UpdateForm from './pages/Form/updateForm';
 import RecompenseList from './pages/recompense/recompenseList';
-
+import AlreadySubmittedPage from './pages/response/AlreadySubmittedPage';
 
 import ReactModal from 'react-modal';
-
 ReactModal.setAppElement('#root'); // Use the ID of your root element
 
 
@@ -29,8 +28,11 @@ const Routing = () => {
     <Routes>
       <Route path="login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/Userform/:formId" element={<Userform />} />
+
+      <Route path="/Userform/:userId/:formId" element={<Userform />} />
       <Route path="/done" element={<Done />} />
+      <Route path="/already-submitted" element={<AlreadySubmittedPage />} />
+
 
       {/* Use PrivateRoute for protected routes */}
       <Route exact="true" path='/form' element={<PrivateRoute />}>

@@ -17,6 +17,12 @@ exports.saveUserResponseAndExport = async (req, res) => {
             formId,
         });
 
+        // Update the user's hasAnswered attribute to true
+        await User.update(
+            { hasAnswered: true },
+            { where: { id: userId } }
+        );
+
         // Save the individual response items to the database
         const responseItems = questions.map(({ questionId, optionId, textResponse }) => ({
             responseId: response.id,
@@ -119,13 +125,35 @@ exports.getResponsesByFormId = async (req, res) => {
 
 exports.saveExcelFile = async (req, res) => {
     try {
-      console.log('Received file:', req.file); // Check if the file is received by multer
-      // The Excel file should be saved in the "response" folder due to multer configuration
-      res.json({ message: 'File saved successfully.' });
+        console.log('Received file:', req.file); // Check if the file is received by multer
+        // The Excel file should be saved in the "response" folder due to multer configuration
+        res.json({ message: 'File saved successfully.' });
     } catch (error) {
-      console.error('Error handling the request:', error);
-      res.status(500).json({ error: 'An error occurred while handling the request.' });
+        console.error('Error handling the request:', error);
+        res.status(500).json({ error: 'An error occurred while handling the request.' });
     }
-  };
+};
 
 
+// Backend Controller
+exports.checkUserResponse = async (req, res) => {
+    const userId = req.params.userId;
+    const formId = req.params.formId;
+    try {
+        const response = await Response.findOne({
+            where: {
+                userId: userId,
+                formId: formId,
+            },
+        });
+
+        if (response) {
+            return res.json({ hasAnswered: true });
+        } else {
+            return res.json({ hasAnswered: false });
+        }
+    } catch (error) {
+        console.error('Error checking user response:', error);
+        res.status(500).json({ error: 'An error occurred while checking user response.' });
+    }
+};
