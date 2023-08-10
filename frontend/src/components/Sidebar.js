@@ -21,7 +21,7 @@ const Sidebar = ({ adminDetails }) => {
       <div className="sidebar">
         <div className="side-header">
           <h3>
-            I<span>ACE</span>
+            I<span>ACE FORMS</span>
           </h3>
         </div>
         <div className="side-content">
@@ -36,33 +36,39 @@ const Sidebar = ({ adminDetails }) => {
           <div className="side-menu">
             <ul>
               <li>
-                <NavLink exact to="/" activeClassName="active">
+                <NavLink exact to="/" >
                   <span className="las la-home" />
                   <small>Dashboard</small>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/profile" activeClassName="active">
+                <NavLink to="/profile" >
                   <span className="las la-user-alt" />
                   <small>Profile</small>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/users" activeClassName="active">
+                <NavLink to="/users" >
                   <span className="las la-users" />
                   <small>Users</small>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/form" activeClassName="active">
+                <NavLink to="/form" >
                   <span className="las la-clipboard-list" />
                   <small>Add New Form</small>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/view-forms" activeClassName="active">
+                <NavLink to="/view-forms" >
                   <span className="las la-eye" />
                   <small>View All Forms</small>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/view-recompenses" >
+                  <span className="las la-gift" />
+                  <small>View All Recompenses</small>
                 </NavLink>
               </li>
             </ul>

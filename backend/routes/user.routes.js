@@ -9,7 +9,7 @@ module.exports = app => {
     // Retrieve all users
     router.get("/", users.findAll);
   
-    // Retrieve all published Tutorials
+    // Retrieve all answered user
     router.get("/answered", users.findAllAnswered);
   
     // Retrieve a single User with id

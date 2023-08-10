@@ -88,6 +88,89 @@ exports.saveForm = async (req, res) => {
   };
   
   
+// Update a form and its questions in the database
+exports.updateForm = async (req, res) => {
+    const { formId } = req.params;
+    const { document_name, doc_desc, questions } = req.body;
+
+    try {
+        // Find the form in the database by its ID
+        const form = await Form.findByPk(formId);
+
+        if (!form) {
+            return res.status(404).json({ message: 'Form not found' });
+        }
+
+        // Update the form details
+        await form.update({
+            documentName: document_name,
+            documentDescription: doc_desc,
+        });
+
+        // Delete the existing questions associated with the form
+        await Question.destroy({
+            where: { formId },
+        });
+
+        const updatedQuestions = []; // Initialize the array
+
+        // Save the updated questions to the database and associate them with the form
+        for (const questionData of questions) {
+            const { questionText, questionType, answer, answerKey, points, open, required, options } = questionData;
+
+            // Save the question to the database and associate it with the form
+            const question = await Question.create({
+                questionText,
+                questionType,
+                answer,
+                answerKey,
+                points,
+                open,
+                required,
+                formId: form.id, // Set the foreign key 'FormId'
+            });
+
+            const savedOptions = [];
+            if (options && options.length > 0) {
+                for (const option of options) {
+                    const { optionText } = option;
+                    const createdOption = await Option.create({
+                        optionText,
+                        questionId: question.id,
+                    });
+
+                    savedOptions.push({ ...option, optionId: createdOption.id });
+                }
+            }
+
+            const updatedQuestion = { ...questionData, questionId: question.id, options: savedOptions };
+            updatedQuestions.push(updatedQuestion);
+        }
+
+        // Construct the file path to the JSON file in the data folder
+        const filePath = path.join(__dirname, `../data/${formId}.json`);
+
+        const formData = {
+            formId: form.id,
+            documentName: document_name,
+            documentDescription: doc_desc,
+            questions: updatedQuestions,
+        };
+
+        const jsonData = JSON.stringify(formData, null, 2);
+
+        fs.writeFileSync(filePath, jsonData);
+
+        res.status(200).json({ message: 'Form and questions updated successfully' });
+    } catch (error) {
+        console.error('Error updating form:', error);
+        res.status(500).json({ error: 'An error occurred while updating form' });
+    }
+};
+
+
+
+
 
 
 // Function to get all the files from the "data" folder
@@ -247,8 +330,8 @@ exports.sendEmailToAllUsers = async (req, res) => {
       const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-              user: 'khouloud.bejaoui@etudiant-isi.utm.tn',
-              pass: 'Gm@ngpoi100',
+              user: 'iace.surveymail@gmail.com',
+              pass: 'sovlexpprtmwgula',
           },
       });
 
@@ -266,7 +349,7 @@ exports.sendEmailToAllUsers = async (req, res) => {
       // Loop through each user and send the email
       for (const user of users) {
           const mailOptions = {
-              from: 'khouloud.bejaoui@etudiant-isi.utm.tn',
+              from: 'iace.surveymail@gmail.com',
               to: user.email, // User's email
               subject: 'Form Response Link',
               text: `Dear ${user.username},\n\nYou can submit your response for the form at the following link: ${formUrl}\n\nBest Regards,\nIACE`,

@@ -1,4 +1,4 @@
-import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE} from "./types";
+import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC,RETRIEVE_FORMS,DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE,UPDATE_FORM_DETAILS} from "./types";
 import formDataService from "../../services/form.service";
 import responseDataService from "../../services/response.service";
 
@@ -101,3 +101,24 @@ export const setQuestions = (questions) => ({
       }
     };
   };
+
+  export const updateFormDetails = (formId, formData) => async (dispatch) => {
+    try {
+      // Call the formDataService.updateForm method to update the form data
+      const response = await formDataService.updateForm(formId, formData);
+  
+      // Dispatch an action to update the form details and questions in the Redux store
+      dispatch({
+        type: UPDATE_FORM_DETAILS,
+        payload: response.data, // Assuming your API returns the updated form data
+      });
+  
+      // Return the response data
+      return response.data;
+    } catch (error) {
+      // Handle the error, dispatch an action if needed
+      console.error('Error while updating the form:', error);
+      throw error;
+    }
+  };
+  

@@ -26,6 +26,7 @@ db.Question = require("./question.model.js")(sequelize, Sequelize);
 db.Option = require("./option.model.js")(sequelize, Sequelize);
 db.Response = require("./response.model.js")(sequelize, Sequelize);
 db.Response_Item = require("./response_item.model.js")(sequelize, Sequelize);
+db.recompenses = require("./recompense.model.js")(sequelize, Sequelize);
 
 // Define the relationship between tables
 db.Form.hasMany(db.Question, { as: 'questions', foreignKey: 'formId' });
@@ -47,6 +48,7 @@ db.Response.belongsTo(db.Form, { foreignKey: 'formId' });
 db.Response.hasMany(db.Response_Item, { foreignKey: 'responseId', as: 'responseItems' });
 db.Response_Item.belongsTo(db.Response, { foreignKey: 'responseId', as: 'response' });
 
-
+db.users.hasMany(db.recompenses, { foreignKey: 'userId' });
+db.recompenses.belongsTo(db.users, { foreignKey: 'userId' });
 
 module.exports = db;

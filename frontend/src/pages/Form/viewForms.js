@@ -7,7 +7,10 @@ import { retrieveForms, deleteForm } from '../../redux/actions/form';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Modal from 'react-modal';
 
-const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
+import EditIcon from '@material-ui/icons/Edit'; // Import the EditIcon component
+import { updateForm } from '../../redux/actions/form'; // Import the updateForm action
+
+const ViewForms = ({ forms, retrieveForms, deleteForm, updateForm }) => {
   const navigate = useNavigate();
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [formIdToDelete, setFormIdToDelete] = useState(null);
@@ -31,6 +34,10 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
   const handleClosePopup = () => {
     setPopupVisible(false);
   };
+
+  /*const handleUpdateForm = (formId) => {
+    navigate(`/update-form/${formId}`); // Redirect to the update form page
+  };*/
 
   // Sort the forms by date of creation (createdAt)
   const sortedForms = forms.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -74,6 +81,9 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
                 <div className={styles.deleteIcon} onClick={() => showAlert(id)}>
                   <DeleteIcon />
                 </div>
+                {/*<div className={styles.updateIcon} onClick={() => handleUpdateForm(id)}>
+                  <EditIcon />
+                  </div>*/}
               </div>
             );
           })}
@@ -98,6 +108,7 @@ const ViewForms = ({ forms, retrieveForms, deleteForm }) => {
           </button>
         </div>
       </Modal>
+
     </main>
   );
 };

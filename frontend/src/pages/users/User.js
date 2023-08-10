@@ -8,7 +8,6 @@ const User = ({ users, retrieveUsers }) => {
   useEffect(() => {
     retrieveUsers();
   }, []);
-
   return (
     <main>
       <div className="page-header">
@@ -59,7 +58,7 @@ const User = ({ users, retrieveUsers }) => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users?.map((user) => (
                   <tr key={user.id}>
                     <td>#{user.id}</td>
                     <td>

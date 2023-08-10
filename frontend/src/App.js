@@ -15,8 +15,13 @@ import ResponseExport from './pages/response/ResponseExport';
 import Done from './pages/response/done';
 import Error from './components/error';
 import PrivateRoute from './components/PrivateRoute';
+import UpdateForm from './pages/Form/updateForm';
+import RecompenseList from './pages/recompense/recompenseList';
 
 
+import ReactModal from 'react-modal';
+
+ReactModal.setAppElement('#root'); // Use the ID of your root element
 
 
 const Routing = () => {
@@ -28,28 +33,34 @@ const Routing = () => {
       <Route path="/done" element={<Done />} />
 
       {/* Use PrivateRoute for protected routes */}
-      <Route exact path='/form' element={<PrivateRoute />}>
-        <Route exact path='/form' element={<Base><Form /></Base>} />
+      <Route exact="true" path='/form' element={<PrivateRoute />}>
+        <Route  path='/form' element={<Base><Form /></Base>} />
       </Route>
-      <Route exact path='/' element={<PrivateRoute />}>
+      <Route exact="true" path='/' element={<PrivateRoute />}>
         <Route path="/" element={<Base><Content /></Base>} />
       </Route>
-      <Route exact path='/profile' element={<PrivateRoute />}>
+      <Route exact="true" path='/profile' element={<PrivateRoute />}>
         <Route path="/profile" element={<Base><Profile /></Base>} />
       </Route>
-      <Route exact path='/users' element={<PrivateRoute />}>
+      <Route exact="true" path='/users' element={<PrivateRoute />}>
         <Route path="/users" element={<Base><User /></Base>} />
       </Route>
-      <Route exact path='/view-forms' element={<PrivateRoute />}>
+      <Route exact="true" path='/view-forms' element={<PrivateRoute />}>
         <Route path="/view-forms" element={<Base><ViewForms /></Base>} />
       </Route>
-      <Route exact path='/view-form/:formId' element={<PrivateRoute />}>
+      <Route exact="true" path='/view-form/:formId' element={<PrivateRoute />}>
         <Route path="/view-form/:formId" element={<Base><FormDetails /></Base>} />
       </Route>
-      <Route exact path='/response/:formId' element={<PrivateRoute />}>
+      <Route exact="true" path='/response/:formId' element={<PrivateRoute />}>
         <Route path="/response/:formId" element={<Base><ResponseExport /></Base>} />
       </Route>
-
+      {/*<Route exact path='/update-form/:formId' element={<PrivateRoute />}>
+        <Route path="/update-form/:formId" element={<Base><UpdateForm /></Base>} />
+      </Route>*/}
+      <Route exact="true" path='/view-recompenses' element={<PrivateRoute />}>
+        <Route path="/view-recompenses" element={<Base><RecompenseList /></Base>} />
+      </Route>
+      
 
       <Route path="*" element={<Error />} />
     </Routes>

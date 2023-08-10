@@ -5,6 +5,8 @@ const userRoutes = require("./routes/user.routes");
 const adminRoutes = require("./routes/admin.routes");
 const formRoutes = require("./routes/form.routes");
 const responseRoutes = require("./routes/response.routes");
+const recompenseRoutes = require("./routes/recompense.routes");
+
 var dotenv = require('dotenv');
 
 const app = express()
@@ -35,6 +37,7 @@ userRoutes(app);
 adminRoutes(app);
 formRoutes(app);
 responseRoutes(app);
+recompenseRoutes(app);
 
 dotenv.config();
 

@@ -1,0 +1,280 @@
+/* modal.module.css */
+
+/*.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+  }
+  
+  .modal-card {
+    width: 400px;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .modal-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #f5f5f5;
+  }
+  
+  .modal-card-title {
+    font-size: 1.25rem;
+  }
+  
+  .delete {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #888;
+  }
+  
+  .modal-card-body {
+    padding: 1rem;
+  }
+  
+  .field {
+    margin-bottom: 1rem;
+  }
+  
+  .label {
+    font-size: 1rem;
+  }
+  
+  .input,
+  .select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .modal-card-foot {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    background-color: #f5f5f5;
+  }
+  
+  .button {
+    margin-left: 0.5rem;
+  }
+  .is-success {
+    background-color: #00d1b2;
+    color: #fff;
+    border-color: #00d1b2;
+  }
+  */
+
+  .bodyV {
+    background: #f1f4f9;
+}
+
+.main {
+    margin: 2%;
+    
+}
+
+.card {
+    width: 20%;
+    display: inline-block;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    background: #fff;
+    border-radius: 5px;
+    margin: 2%;
+}
+
+.image img {
+    width: 100%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+
+}
+
+.title {
+
+    text-align: center;
+    padding: 10px;
+
+}
+
+.h1V {
+    font-size: 20px;
+}
+
+.des {
+    padding: 3px;
+    text-align: center;
+
+    padding-top: 10px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.buttonV {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.buttonV:hover {
+    background-color: black;
+    color: white;
+    transition: .5s;
+    cursor: pointer;
+}
+
+.popupContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 500px;
+  }
+  
+  .popupTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .popupMessage {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .popupButtons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .popupButton {
+    padding: 8px 16px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .popupButtonPrimary {
+    background-color: red;
+  }
+  
+  .popupButtonSecondary {
+    background-color: #6c757d;
+  }
+
+/*add modal*/
+/* modal.module.css */
+
+
+.popupContainerAdd {
+    width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .popupOverlayAdd {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .popupTitleAdd {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .popupContentAdd {
+    margin-bottom: 20px;
+  }
+  
+  .fieldAdd {
+    margin-bottom: 15px;
+  }
+  
+  .labelAdd {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .controlAdd {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputAdd,
+  .selectAdd {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .popupButtonsAdd {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .popupButtonAdd {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+  }
+  
+  .popupButtonPrimaryAdd {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .popupButtonSecondaryAdd {
+    background-color: #ccc;
+    color: #333;
+  }
+  

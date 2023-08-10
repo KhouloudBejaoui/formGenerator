@@ -1,4 +1,4 @@
-import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC, RETRIEVE_FORMS, DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE } from "../actions/types";
+import { SET_QUESTIONS, CHANGE_TYPE, SET_DOC_NAME, SET_DOC_DESC, RETRIEVE_FORMS, DELETE_FORM, GET_FORM_DETAILS_SUCCESS, GET_FORM_DETAILS_FAILURE,UPDATE_FORM_DETAILS } from "../actions/types";
 
 export const initialState = {
     questions: [{ questionText: "Question", questionType: "radio", options: [{ optionText: "Option 1" }], open: true, required: false }],
@@ -51,6 +51,13 @@ const formReducer = (state = initialState, action) => {
                 loading: false,
                 error: action.payload,
             };
+            case UPDATE_FORM_DETAILS:
+                return {
+                  ...state,
+                  questions: action.payload.questions,
+                  doc_name: action.payload.doc_name,
+                  doc_desc: action.payload.doc_desc,
+                };
         default:
             return state;
     }

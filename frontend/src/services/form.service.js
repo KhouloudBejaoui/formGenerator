@@ -27,6 +27,9 @@ class formDataService {
     return http.post(`/forms/sendEmail/${formId}`);
   }
   
+  updateForm(formId, formData) {
+    return http.put(`/forms/${formId}`, formData);
+  }
 
 }
 
