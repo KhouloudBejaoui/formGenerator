@@ -142,6 +142,9 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
                     <span className="las la-sort" /> OPERATEUR
                   </th>
                   <th>
+                    <span className="las la-sort" /> IS IT SENDED ?
+                  </th>
+                  <th>
                     <span className="las la-sort" /> ACTIONS
                   </th>
                 </tr>
@@ -160,6 +163,11 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
                     </td>
                     <td>{recompense.code}</td>
                     <td>{recompense.operateur}</td>
+                    <td>
+                      <span className={recompense.isSended ? 'green' : 'red'}>
+                        {recompense.isSended ? 'true' : 'false'}
+                      </span>
+                    </td>
                     <td>
                       <div className="actions">
                       <span className="la la-pencil" onClick={() => handleUpdateRecompense(recompense)} />

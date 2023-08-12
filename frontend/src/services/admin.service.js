@@ -20,6 +20,11 @@ class AdminDataService {
       },
     });
   }
+
+  updateAdminDetails(adminDataProfile) {
+    return http.put("/admin/updateProfile", adminDataProfile);
+  }
+
 }
 
 export default new AdminDataService();

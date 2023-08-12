@@ -14,10 +14,12 @@ const Navbar=() =>{
   
       // Clear the token from Local Storage
       localStorage.removeItem('token');
-  
+      // Clear the adminDetails from Local Storage
+      localStorage.removeItem('adminDetails');
       // Navigate to the login page
       navigate('/login');
     };
+    
   return (
     <header>
     <div className="header-content">

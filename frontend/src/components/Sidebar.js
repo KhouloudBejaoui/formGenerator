@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import "../assets/css/style.css";
 import avatar from '../assets/images/avatar.png';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const Sidebar = ({ adminDetails }) => {
-  // Check if adminDetails exist in local storage or session storage
-  const storedAdminDetails = JSON.parse(localStorage.getItem('adminDetails')) || JSON.parse(sessionStorage.getItem('adminDetails'));
+const Sidebar = () => {
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
 
-  // Use the stored adminDetails if available, otherwise use the one from Redux store
-  const { firstname, lastname } = storedAdminDetails || adminDetails || { firstname: '', lastname: '' };
+  // Redux store
+  const adminDetails = useSelector(state => state.admin.adminDetails);
+
+  useEffect(() => {
+    // Check if adminDetails exist in local storage or session storage
+    const storedAdminDetails = JSON.parse(localStorage.getItem('adminDetails')) || JSON.parse(sessionStorage.getItem('adminDetails'));
+
+    // Use the stored adminDetails if available, otherwise use the one from Redux store
+    if (storedAdminDetails) {
+      setFirstname(storedAdminDetails.firstname);
+      setLastname(storedAdminDetails.lastname);
+    } else if (adminDetails) {
+      setFirstname(adminDetails.firstname);
+      setLastname(adminDetails.lastname);
+    }
+  }, [adminDetails]);
 
   return (
     <>
@@ -41,12 +55,12 @@ const Sidebar = ({ adminDetails }) => {
                   <small>Dashboard</small>
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink to="/profile" >
                   <span className="las la-user-alt" />
                   <small>Profile</small>
                 </NavLink>
-              </li>
+              </li>*/}
               <li>
                 <NavLink to="/users" >
                   <span className="las la-users" />
@@ -79,8 +93,4 @@ const Sidebar = ({ adminDetails }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  adminDetails: state.admin.adminDetails, // Assuming you have an admin reducer that stores the admin details
-});
-
-export default connect(mapStateToProps)(Sidebar);
+export default Sidebar;

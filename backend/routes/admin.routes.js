@@ -9,6 +9,7 @@ module.exports = app => {
   router.post("/login", admin.login);
   router.get("/details", verify, admin.getAdminDetails);
   router.post("/logout", admin.logout);
+  router.put('/updateProfile', admin.updateAdminDetails);
 
   app.use('/api/admin', router);
 };

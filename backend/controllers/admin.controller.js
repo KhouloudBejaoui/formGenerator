@@ -116,3 +116,43 @@ exports.logout = async (req, res) => {
     this.next(err);
   }
 };
+
+
+exports.updateAdminDetails = async (req, res) => {
+  try {
+      // Get admin ID from the authenticated user
+      const adminId = req.user.id;
+
+      // Extract updated details from request body
+      const { firstname, lastname, email, number, password } = req.body;
+
+      // Create an object with only the fields that need updating
+      const updatedFields = {};
+      if (firstname) updatedFields.firstname = firstname;
+      if (lastname) updatedFields.lastname = lastname;
+      if (email) updatedFields.email = email;
+      if (number) updatedFields.number = number;
+
+      // Hash the new password if provided
+      if (password) {
+          const salt = await bcrypt.genSaltSync(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          updatedFields.password = hashedPassword;
+      }
+
+      // Update the admin details in the database
+      await Admin.update(updatedFields, {
+          where: { id: adminId },
+      });
+
+      // Fetch the updated admin details
+      const updatedAdmin = await Admin.findByPk(adminId, {
+          attributes: ['firstname', 'lastname', 'email', 'number'],
+      });
+
+      res.json(updatedAdmin);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+  }
+};

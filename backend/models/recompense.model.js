@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       operateur: {
         type: Sequelize.STRING
+      },
+      isSended :{
+        type: Sequelize.BOOLEAN
       }
     });
   

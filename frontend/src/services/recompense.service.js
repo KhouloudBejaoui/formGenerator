@@ -28,6 +28,10 @@ class RecompenseDataService {
   findByOperateur(operateur) {
     return http.get(`/recompenses?operateur=${operateur}`);
   }
+
+  sendRecompenseByEmail = (data) => {
+    return http.post('/recompenses/send-recompense-email', data);
+  };
 }
 
 export default new RecompenseDataService();

@@ -1,4 +1,4 @@
-import { REGISTER_SUCCESS, REGISTER_FAILURE, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT, SET_ADMIN_DETAILS } from './types.js'
+import { REGISTER_SUCCESS, REGISTER_FAILURE, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT, SET_ADMIN_DETAILS,UPDATE_ADMIN_DETAILS } from './types.js'
 import AdminDataService from "../../services/admin.service";
 import axios from 'axios';
 
@@ -30,6 +30,13 @@ export const logout = () => ({
 export const setAdminDetails = (adminDetails) => {
     return {
         type: SET_ADMIN_DETAILS,
+        payload: adminDetails,
+    };
+};
+
+export const updateAdminDetails = (adminDetails) => {
+    return {
+        type: UPDATE_ADMIN_DETAILS,
         payload: adminDetails,
     };
 };
@@ -73,21 +80,44 @@ export const loginAdmin = (adminData) => {
             // Store the token in localStorage or a secure cookie
             localStorage.setItem('token', token);
 
-            // Dispatch the LOGIN_SUCCESS action with the token if the login is successful
-            dispatch(loginSuccess(token));
-
             // Fetch the admin's details using the extracted token
             const adminDetailsResponse = await AdminDataService.getAdminDetails(token);
 
+            // Convert the adminDetailsResponse.data object to a JSON string before storing
+            localStorage.setItem('adminDetails', JSON.stringify(adminDetailsResponse.data));
+
+            // Dispatch the LOGIN_SUCCESS action with the token if the login is successful
+            dispatch(loginSuccess(token));
+
             // Dispatch an action to store the admin's details in the state
             dispatch(setAdminDetails(adminDetailsResponse.data));
-
+            
             // Return the entire response object
             return response.data;
         } catch (error) {
             // Dispatch the LOGIN_FAILURE action with the error message if the login fails
             dispatch(loginFailure(error.message));
             // Throw the error to indicate that the login failed
+            throw error;
+        }
+    };
+};
+
+// Action creator to update admin details
+export const updateAdmin = (updatedAdminDetails) => {
+    return async (dispatch) => {
+        try {
+            // Make the API request to update the admin details
+            const response = await AdminDataService.updateAdminDetails(updatedAdminDetails);
+
+            // Dispatch action to update admin details in the state
+            dispatch(updateAdminDetails(updatedAdminDetails));
+
+            // Return the response data
+            return response.data;
+        } catch (error) {
+            // Handle error and dispatch failure action if needed
+            console.error(error);
             throw error;
         }
     };

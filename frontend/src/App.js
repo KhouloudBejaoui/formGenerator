@@ -41,9 +41,9 @@ const Routing = () => {
       <Route exact="true" path='/' element={<PrivateRoute />}>
         <Route path="/" element={<Base><Content /></Base>} />
       </Route>
-      <Route exact="true" path='/profile' element={<PrivateRoute />}>
+      {/* <Route exact="true" path='/profile' element={<PrivateRoute />}>
         <Route path="/profile" element={<Base><Profile /></Base>} />
-      </Route>
+      </Route>*/}
       <Route exact="true" path='/users' element={<PrivateRoute />}>
         <Route path="/users" element={<Base><User /></Base>} />
       </Route>

@@ -12,7 +12,8 @@ const Register = () =>  {
   const dispatch = useDispatch();
 
   const [adminData, setAdminData] = useState({
-    username: '',
+    firstname: '',
+    lastname:'',
     email: '',
     password: '',
   });
@@ -70,8 +71,10 @@ const Register = () =>  {
             <h1 className={styles.h1Login}>Register</h1>
             <hr className={styles.hrLogin} />
             <p className={styles.pLogin}>Explore the World!</p>
-            <label className={styles.labelLogin}>Username</label>
-            <input className={styles.inputLogin} type="text" name="username" value={adminData.username} onChange={handleChange} placeholder="enter your username" />
+            <label className={styles.labelLogin}>Fistname</label>
+            <input className={styles.inputLogin} type="text" name="firstname" value={adminData.firstname} onChange={handleChange} placeholder="enter your firstname" />
+            <label className={styles.labelLogin}>Lastname</label>
+            <input className={styles.inputLogin} type="text" name="lastname" value={adminData.lastname} onChange={handleChange} placeholder="enter your lastname" />
             <label className={styles.labelLogin}>Email</label>
             <input className={styles.inputLogin} type="text" name="email" value={adminData.email} onChange={handleChange} placeholder="abc@example.com" />
             <label className={styles.labelLogin}>Password</label>

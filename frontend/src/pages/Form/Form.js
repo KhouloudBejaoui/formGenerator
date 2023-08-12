@@ -366,7 +366,7 @@ const handleClosePopup = () => {
                             <input type="text" className={styles.question} placeholder="Question" value={ques.questionText} onChange={(e) => { changeQuestion(e.target.value, i) }} />
                             <CropOriginalIcon style={{ color: "#5f6368" }} />
                             <Select className={styles.select} style={{ color: "#5f6368", fontSize: "13px" }}>
-                              <MenuItem id="text" value="Text" onClick={() => { addQuestionType(i, "text") }}> <SubjectIcon style={{ marginRight: "10px" }} />Paragraph</MenuItem>
+                              <MenuItem id="text" value="Text" onClick={() => { addQuestionType(i, "text") }}> <SubjectIcon style={{ marginRight: "10px" }} />Text input</MenuItem>
                               <MenuItem id="checkbox" value="Checkbox" onClick={() => { addQuestionType(i, "checkbox") }}><CheckBoxIcon style={{ marginRight: "10px", color: "#70757a" }} checked /> Checkboxes</MenuItem>
                               <MenuItem id="radio" value="Radio" onClick={() => { addQuestionType(i, "radio") }}> <Radio style={{ marginRight: "10px", color: "#70757a" }} checked />Multiple choice</MenuItem>
                             </Select>

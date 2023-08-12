@@ -21,5 +21,7 @@ module.exports = app => {
     // Delete all Recompenses
     router.delete("/", recompenses.deleteAll);
   
+    router.post('/send-recompense-email', recompenses.sendRecompenseByEmail);
+
     app.use('/api/recompenses', router);
   };

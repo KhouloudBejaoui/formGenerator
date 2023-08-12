@@ -13,7 +13,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGOUT = 'LOGOUT';
 export const SET_ADMIN_DETAILS = 'SET_ADMIN_DETAILS';
-
+export const UPDATE_ADMIN_DETAILS = 'UPDATE_ADMIN_DETAILS';
 //form
 export const SET_QUESTIONS = "SET_QUESTIONS";
 export const CHANGE_TYPE = "CHANGE_TYPE";
