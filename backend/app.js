@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/admin.routes");
 const formRoutes = require("./routes/form.routes");
 const responseRoutes = require("./routes/response.routes");
 const recompenseRoutes = require("./routes/recompense.routes");
+const statisticsRoutes = require("./routes/statistics.routes");
 
 var dotenv = require('dotenv');
 
@@ -38,6 +39,7 @@ adminRoutes(app);
 formRoutes(app);
 responseRoutes(app);
 recompenseRoutes(app);
+statisticsRoutes(app);
 
 dotenv.config();
 

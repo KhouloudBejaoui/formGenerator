@@ -12,7 +12,7 @@ function Userform() {
   const [hasAnswered, setHasAnswered] = useState(false);
   const [answer, setAnswer] = useState([]);
   const navigate = useNavigate(); // Add the missing 'navigate' variable
-  const { userId,formId } = useParams();
+  const { userId, formId } = useParams();
   const isLoading = useSelector((state) => state.form.loading);
   const error = useSelector((state) => state.form.error);
   const dispatch = useDispatch();
@@ -44,13 +44,13 @@ function Userform() {
         console.error('Error checking user response:', error);
       }
     }
-  
+
     // Call the checkUserResponse function when userId and formId are available
     if (userId && formId) {
       checkUserResponse();
     }
   }, [userId, formId]);
-  
+
   const { questions = [], documentName, documentDescription } = formDetails || {};
 
 
@@ -99,13 +99,34 @@ function Userform() {
 
   }
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+
   // Inside the submit() response function
   async function submit() {
     const post_answer_data = {};
+    let allQuestionsAnswered = true; // Initialize the flag for checking all questions
+
     answer.forEach((ele) => {
       post_answer_data[ele.question] = ele.answer;
+      if (ele.answer === '' && questions.find(question => question.questionText === ele.question).required) {
+        allQuestionsAnswered = false; // Set the flag to false if a required question is unanswered
+      }
     });
+
     console.log('formDetails:', formDetails);
+
+    if (!allQuestionsAnswered) {
+      setAlertType('alert-error');
+      setAlertMessage('Please answer all the required questions.');
+      setShowAlert(true);
+      // Hide the alert after 3 seconds (3000 milliseconds)
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+      return; // Do not proceed with submission
+    }
 
     try {
       // Send user response to the server to save in the database
@@ -133,6 +154,7 @@ function Userform() {
     }
   }
 
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -149,6 +171,7 @@ function Userform() {
           <small>Please try to answer to this form</small>
         </div>
         <div className={styles.submit}>
+          {showAlert && <div className={`${styles.alert} ${styles[alertType]}`}>{alertMessage}</div>}
           <div className={styles.user_form}>
             <div className={styles.user_form_section}>
               <div className={styles.user_title_section}>
@@ -158,7 +181,7 @@ function Userform() {
               {questions.map((question, qindex) => (
                 <div key={qindex} className={styles.user_form_questions}>
                   <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
-                    {qindex + 1}.  {question.questionText}
+                    {qindex + 1}.   {question.questionText} {question.required ? <span style={{ color: 'red' }}>*</span> : null}
                   </Typography>
                   {question.options.map((ques, index) => (
                     <div key={index} style={{ marginBottom: "5px" }}>
@@ -221,8 +244,8 @@ function Userform() {
       </main>
     );
   }
-  else{
-      navigate("/already-submitted");
+  else {
+    navigate("/already-submitted");
   }
 }
 

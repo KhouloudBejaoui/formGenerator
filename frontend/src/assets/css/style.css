@@ -541,3 +541,35 @@ table tbody tr {
 
 
 
+
+
+  
+
+  .dashboard-content {
+    display: flex; /* Use Flexbox for layout */
+    justify-content: space-between; /* Distribute items evenly along the main axis */
+    align-items: flex-start; /* Align items to the top */
+    flex-wrap: wrap; /* Allow items to wrap to a new row if needed */
+  }
+  
+  .chart-container {
+    width: 50%; /* Set the desired width for each chart */
+    margin-bottom: 20px; /* Add margin between charts */
+    box-sizing: border-box; /* Include padding and border in width */
+  }
+
+  .chart-containerPie {
+    width: 25%; /* Set the desired width for each chart */
+    margin-bottom: 20px; /* Add margin between charts */
+    box-sizing: border-box; /* Include padding and border in width */
+  }
+  
+  @media (max-width: 768px) {
+    .chart-container {
+      width: 100%; /* Make both charts full width on smaller screens */
+    }
+    .chart-containerPie {
+        width: 100%; /* Make both charts full width on smaller screens */
+      }
+  }
+  

@@ -54,3 +54,25 @@ margin-bottom: 8px;
     font-size: medium;
     font-weight: 500;
 }
+
+
+/*form details*/
+
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+    width: 20%;
+    margin: auto;
+  }
+  
+  .alert-success {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .alert-error {
+    background-color: #f44336; /* Red */
+  }

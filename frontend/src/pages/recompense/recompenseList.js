@@ -114,7 +114,7 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
               <select name="" id="">
                 <option value="">ID</option>
               </select>
-              <button onClick={() => handleAddRecompense()}>Add recompense</button>
+              <button style={{cursor:'pointer'}} onClick={() => handleAddRecompense()}>Add recompense</button>
             </div>
             <div className="browse">
               <input
@@ -145,6 +145,9 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
                     <span className="las la-sort" /> IS IT SENDED ?
                   </th>
                   <th>
+                    <span className="las la-sort" /> USER ID
+                  </th>
+                  <th>
                     <span className="las la-sort" /> ACTIONS
                   </th>
                 </tr>
@@ -168,10 +171,12 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
                         {recompense.isSended ? 'true' : 'false'}
                       </span>
                     </td>
+                    <td>{recompense.userId}</td>
                     <td>
                       <div className="actions">
-                      <span className="la la-pencil" onClick={() => handleUpdateRecompense(recompense)} />
-                        <span className="las la-trash" onClick={() => showAlert(recompense.id)} />
+                      <span className="la la-pencil" style={{cursor:'pointer',color:'green'}} onClick={() => handleUpdateRecompense(recompense)} />
+                      <span />
+                      <span className="las la-trash" style={{cursor:'pointer',color:'red'}} onClick={() => showAlert(recompense.id)} />
                       </div>
                     </td>
                   </tr>

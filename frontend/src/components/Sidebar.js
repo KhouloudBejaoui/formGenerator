@@ -82,7 +82,7 @@ const Sidebar = () => {
               <li>
                 <NavLink to="/view-recompenses" >
                   <span className="las la-gift" />
-                  <small>View All Recompenses</small>
+                  <small>View All Rewards</small>
                 </NavLink>
               </li>
             </ul>

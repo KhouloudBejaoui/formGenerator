@@ -85,18 +85,37 @@ function FormDetails() {
 
   }
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
   async function submit() {
     try {
       // Call the backend API to send emails to all users
       const response = await formDataService.sendFormEmail(formId);
       console.log(response.data); // Assuming the response from the backend is { message: 'Emails sent successfully.' }
-      alert('Emails sent successfully.');
+      
+      setAlertType('alert-success');
+      setAlertMessage('Emails sent successfully!');
+      setShowAlert(true);
+      
+      // Hide the alert after 3 seconds (3000 milliseconds)
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
     } catch (error) {
       console.error('Error sending emails:', error);
-      alert('An error occurred while sending emails.');
+      setAlertType('alert-error');
+      setAlertMessage('An error occurred while sending emails.');
+      setShowAlert(true);
+      
+      // Hide the alert after 3 seconds (3000 milliseconds)
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
     }
   }
+  
 
 
 
@@ -116,6 +135,7 @@ function FormDetails() {
         <small>Home / View Form</small>
       </div>
       <div className={styles.submit}>
+      {showAlert && <div className={`${styles.alert} ${styles[alertType]}`}>{alertMessage}</div>}
         <div className={styles.user_form}>
           <div className={styles.user_form_section}>
             <div className={styles.user_title_section}>
@@ -125,7 +145,7 @@ function FormDetails() {
             {questions.map((question, qindex) => (
               <div key={qindex} className={styles.user_form_questions}>
                 <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
-                  {qindex + 1}.  {question.questionText}
+                  {qindex + 1}.   {question.questionText} {question.required ? <span style={{ color: 'red' }}>*</span> : null}
                 </Typography>
                 {question.options.map((ques, index) => (
                   <div key={index} style={{ marginBottom: "5px" }}>
@@ -184,8 +204,9 @@ function FormDetails() {
             </div>
 
           </div>
-          <Button variant="contained" color="primary" onClick={handleShowResponse}>
-            Show Response
+          <br></br>
+          <Button variant="contained" onClick={handleShowResponse}>
+            Show User Response
           </Button>
         </div>
       </div>

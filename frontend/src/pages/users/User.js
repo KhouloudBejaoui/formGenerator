@@ -86,7 +86,7 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
               <select name="" id="">
                 <option value="">ID</option>
               </select>
-              <button>Add user</button>
+              <button style={{cursor:'pointer'}}>Add user</button>
             </div>
             <div className="browse">
               <input
@@ -137,7 +137,7 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
                     </td>
                     <td>
                       <div className="actions">
-                        <span className="lab la-telegram-plane" onClick={() => showAlert(user.id)} />
+                        <span className="lab la-telegram-plane" style={{cursor:'pointer'}} onClick={() => showAlert(user.id)} />
                       </div>
                     </td>
                   </tr>

@@ -48,7 +48,7 @@ const ViewForms = ({ forms, retrieveForms, deleteForm, updateForm }) => {
         <h1>Forms</h1>
         <small>Home / View All Forms</small>
       </div>
-      <div className={styles.bodyV}>
+      <div className="page-content">
         <div className={styles.main}>
           {sortedForms.map((form) => {
             const { id, documentName, documentDescription, createdAt } = form;
@@ -78,7 +78,7 @@ const ViewForms = ({ forms, retrieveForms, deleteForm, updateForm }) => {
                     View Form
                   </button>
                 </div>
-                <div className={styles.deleteIcon} onClick={() => showAlert(id)}>
+                <div className={styles.deleteIcon} style={{cursor:'pointer'}} onClick={() => showAlert(id)}>
                   <DeleteIcon />
                 </div>
                 {/*<div className={styles.updateIcon} onClick={() => handleUpdateForm(id)}>
