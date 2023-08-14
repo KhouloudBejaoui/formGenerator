@@ -118,12 +118,12 @@ const Form = () => {
     data_adding()
   },[])*/
 
-const showAlert = () => {
-  setPopupVisible(true);
-};
-const handleClosePopup = () => {
-  setPopupVisible(false);
-};
+  const showAlert = () => {
+    setPopupVisible(true);
+  };
+  const handleClosePopup = () => {
+    setPopupVisible(false);
+  };
 
   function changeQuestion(text, i) {
     var newQuestion = [...questions];
@@ -156,7 +156,7 @@ const handleClosePopup = () => {
 
   function addOption(i) {
     var optionsOfQuestion = [...questions];
-    if (optionsOfQuestion[i].options.length < 5) {
+    if (optionsOfQuestion[i].options.length < 20) {
       optionsOfQuestion[i].options.push({ optionText: "option" + (optionsOfQuestion[i].options.length + 1) })
     } else {
       console.log("max 5 options");
@@ -265,9 +265,9 @@ const handleClosePopup = () => {
           doc_desc: documentDescription,
           questions,
         };
-  
+
         console.log('Form Data:', formData);
-  
+
         // Dispatch the saveForm action to save the form data
         dispatch(saveForm(formData))
           .then((response) => {
@@ -284,7 +284,7 @@ const handleClosePopup = () => {
       }
     });
   };
-  
+
 
 
   async function commitToDB() {
@@ -294,18 +294,18 @@ const handleClosePopup = () => {
         type: actionTypes.SET_QUESTIONS,
         questions: questions,
       });
-  
+
       // Save the form data
       await handleSaveForm();
-  
+
       // If the form is saved successfully, show the popup alert
       showAlert();
     } catch (error) {
       console.error("Error:", error);
     }
   }
-  
-  
+
+
 
   function questionsUI() {
     return questions.map((ques, i) => (
@@ -332,8 +332,8 @@ const handleClosePopup = () => {
                     >
                       {!questions[i].open ? (
                         <div className={styles.saved_questions}>
-                          <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px" }}>
-                            {i + 1}. {questions[i].questionText}
+                          <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
+                            {i + 1}.   {questions[i].questionText} {questions[i].required ? <span style={{ color: 'red' }}>*</span> : null}
                           </Typography>
 
                           {ques.options.map((op, j) => (
@@ -388,7 +388,7 @@ const handleClosePopup = () => {
                             </div>
                           ))}
                           {
-                            ques.options.length < 5 ? (
+                            ques.options.length < 20 ? (
                               <div className={styles.add_question_body}>
                                 <FormControlLabel
                                   disabled

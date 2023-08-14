@@ -1,0 +1,542 @@
+{
+  "formId": 14,
+  "documentName": "Dégitalisation",
+  "documentDescription": "Questionnaire sur la digitalisation",
+  "questions": [
+    {
+      "questionText": "Nom et Prénom",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 108
+        }
+      ],
+      "answer": false,
+      "answerKey": "",
+      "points": 0,
+      "open": false,
+      "required": false,
+      "questionId": 21
+    },
+    {
+      "questionText": "Adresse mail",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 109
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 22
+    },
+    {
+      "questionText": "Tél",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 110
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 23
+    },
+    {
+      "questionText": "Genre",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Homme",
+          "optionId": 111
+        },
+        {
+          "optionText": "Femme",
+          "optionId": 112
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 24
+    },
+    {
+      "questionText": "Gouvernorat",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 113
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 25
+    },
+    {
+      "questionText": "Tranches d'age",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "18-29",
+          "optionId": 114
+        },
+        {
+          "optionText": "30-49",
+          "optionId": 115
+        },
+        {
+          "optionText": "50 et plus",
+          "optionId": 116
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 26
+    },
+    {
+      "questionText": "Niveau d'études",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Aucun niveau",
+          "optionId": 117
+        },
+        {
+          "optionText": "Niveau Primaire",
+          "optionId": 118
+        },
+        {
+          "optionText": "Niveau Secondaire",
+          "optionId": 119
+        },
+        {
+          "optionText": "Niveau Supérieur",
+          "optionId": 120
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 27
+    },
+    {
+      "questionText": "Catégorie Socio-professionnelle",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Élève ou Etudiant",
+          "optionId": 121
+        },
+        {
+          "optionText": "Chômeur",
+          "optionId": 122
+        },
+        {
+          "optionText": "Ouvrier",
+          "optionId": 123
+        },
+        {
+          "optionText": "Ouvrier qualifié",
+          "optionId": 124
+        },
+        {
+          "optionText": "Cadre",
+          "optionId": 125
+        },
+        {
+          "optionText": "Cadre supérieur",
+          "optionId": 126
+        },
+        {
+          "optionText": "Retraité",
+          "optionId": 127
+        },
+        {
+          "optionText": "Rien",
+          "optionId": 128
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 28
+    },
+    {
+      "questionText": "Taille de l'entreprise dans laquelle vous travaillez",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "< 10 salariés",
+          "optionId": 129
+        },
+        {
+          "optionText": "10-49 salariés",
+          "optionId": 130
+        },
+        {
+          "optionText": "50-199 salariés",
+          "optionId": 131
+        },
+        {
+          "optionText": "200 salariés",
+          "optionId": 132
+        },
+        {
+          "optionText": "Supérieur à 200",
+          "optionId": 133
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 29
+    },
+    {
+      "questionText": "Dans votre quotidien, utilisez-vous le digital",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 134
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 135
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 136
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 137
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 30
+    },
+    {
+      "questionText": "Quel outil de digitalisation utilisez-vous ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "PC",
+          "optionId": 138
+        },
+        {
+          "optionText": "Portable",
+          "optionId": 139
+        },
+        {
+          "optionText": "Smartphone",
+          "optionId": 140
+        },
+        {
+          "optionText": "Tablette",
+          "optionId": 141
+        },
+        {
+          "optionText": "Montres connectées",
+          "optionId": 142
+        },
+        {
+          "optionText": "Objets connectés",
+          "optionId": 143
+        },
+        {
+          "optionText": "Télévision",
+          "optionId": 144
+        },
+        {
+          "optionText": "Application mobile",
+          "optionId": 145
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 146
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 31
+    },
+    {
+      "questionText": "Si vous utilisez le Smartphone, lequel ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "IPhone",
+          "optionId": 147
+        },
+        {
+          "optionText": "Samsung Galaxy",
+          "optionId": 148
+        },
+        {
+          "optionText": "Non",
+          "optionId": 149
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 32
+    },
+    {
+      "questionText": "Quel est le système d’exploitation que vous utilisez ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "IOS (anciennement iPhone OS), développé par Apple",
+          "optionId": 150
+        },
+        {
+          "optionText": "Android",
+          "optionId": 151
+        },
+        {
+          "optionText": "Windows",
+          "optionId": 152
+        },
+        {
+          "optionText": "Blackberry OS (développé par Research In Motion)",
+          "optionId": 153
+        },
+        {
+          "optionText": "Linux (système d'exploitation open source/libre)",
+          "optionId": 154
+        },
+        {
+          "optionText": "Symbian Nokia",
+          "optionId": 155
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 156
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 33
+    },
+    {
+      "questionText": "Quel est le navigateur que vous utilisez ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Google Chrome",
+          "optionId": 157
+        },
+        {
+          "optionText": "Firefox",
+          "optionId": 158
+        },
+        {
+          "optionText": "Safari",
+          "optionId": 159
+        },
+        {
+          "optionText": "Internet Explorer",
+          "optionId": 160
+        },
+        {
+          "optionText": "Doodle",
+          "optionId": 161
+        },
+        {
+          "optionText": "Opéra",
+          "optionId": 162
+        },
+        {
+          "optionText": "IE+ Edge (Microsoft)",
+          "optionId": 163
+        },
+        {
+          "optionText": "Non concerné",
+          "optionId": 164
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 34
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Social media (Facebook, LinkedIn, Skype, Viber, WhatsApp, Twitter,....)",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 165
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 166
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 167
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 168
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 169
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 35
+    },
+    {
+      "questionText": "Quel type de connexion internet utilisez-vous ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "ADSL",
+          "optionId": 170
+        },
+        {
+          "optionText": "Fibre Optique",
+          "optionId": 171
+        },
+        {
+          "optionText": "Câble",
+          "optionId": 172
+        },
+        {
+          "optionText": "Wifi",
+          "optionId": 173
+        },
+        {
+          "optionText": "3G",
+          "optionId": 174
+        },
+        {
+          "optionText": "4G",
+          "optionId": 175
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 176
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 36
+    },
+    {
+      "questionText": "Lieu de connexion",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "Domicile",
+          "optionId": 177
+        },
+        {
+          "optionText": "Travail",
+          "optionId": 178
+        },
+        {
+          "optionText": "Université",
+          "optionId": 179
+        },
+        {
+          "optionText": "Espace Public",
+          "optionId": 180
+        },
+        {
+          "optionText": "Mobile",
+          "optionId": 181
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 182
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 37
+    },
+    {
+      "questionText": "Depuis quand avez-vous observé une évolution en matière de digital ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Moins de 2 ans",
+          "optionId": 183
+        },
+        {
+          "optionText": "Entre 2 et 5 ans",
+          "optionId": 184
+        },
+        {
+          "optionText": "Entre 5 et 10 ans",
+          "optionId": 185
+        },
+        {
+          "optionText": "Plus de 10 ans",
+          "optionId": 186
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 38
+    },
+    {
+      "questionText": "Quel est votre fournisseur d’internet ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Globalnet",
+          "optionId": 187
+        },
+        {
+          "optionText": "Topnet",
+          "optionId": 188
+        },
+        {
+          "optionText": "Hexabyte",
+          "optionId": 189
+        },
+        {
+          "optionText": "Orange",
+          "optionId": 190
+        },
+        {
+          "optionText": "TUNET",
+          "optionId": 191
+        },
+        {
+          "optionText": "Ooredoo",
+          "optionId": 192
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 39
+    },
+    {
+      "questionText": "Quel est votre principal opérateur téléphonique ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Ooredoo",
+          "optionId": 193
+        },
+        {
+          "optionText": "Tunisie Telecom",
+          "optionId": 194
+        },
+        {
+          "optionText": "Orange",
+          "optionId": 195
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 40
+    }
+  ]
+}

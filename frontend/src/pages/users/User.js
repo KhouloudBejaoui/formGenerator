@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { retrieveUsers } from '../../redux/actions/users';
+import { retrieveUsers, deleteUser } from '../../redux/actions/users';
 import styles from './user.module.css';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import { retrieveRecompenses } from "../../redux/actions/recompense";
 import recompenseDataService from "../../services/recompense.service";
+import userDataService from "../../services/user.service";
 
-const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
+const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompenses }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRecompense, setSelectedRecompense] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isSelectRecompenseModalOpen, setIsSelectRecompenseModalOpen] = useState(false); // New state
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
 
   useEffect(() => {
     retrieveUsers();
@@ -24,9 +30,76 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
     setSelectedUserId(userId); // Set the selected user ID
     setIsModalOpen(true);
   };
-
   const handleClosePopup = () => {
     setIsModalOpen(false);
+  };
+
+  const showAlertDelete = (userId) => {
+    setPopupVisible(true);
+    setUserIdToDelete(userId); // Set the formIdToDelete when the delete icon is clicked
+  };
+  const handleClosePopupDelete = () => {
+    setPopupVisible(false);
+  };
+
+  const handleDeleteUser = (userId) => {
+    console.log(userId);
+    deleteUser(userId);
+    navigate('/users');
+    handleClosePopupDelete();
+  };
+
+  // Define states for input fields
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+
+  const handleAddUser = () => {
+    setUsername(''); // Reset the input fields
+    setEmail('');
+    setSelectedUser(null); // Clear the selected recompense
+    setIsModalUpdateOpen(true);
+  };
+
+  const handleUpdateUser = (user) => {
+    setSelectedUser(user);
+    setUsername(user.username);
+    setEmail(user.email);
+    setIsModalUpdateOpen(true);
+  };
+
+  const handleSaveUser = async () => {
+    try {
+      if (selectedUser) {
+        // Update mode
+        const updatedUser = {
+          ...selectedUser,
+          email,
+          username
+        };
+
+        console.log('Updating user with the following values:', updatedUser);
+
+        await userDataService.update(selectedUser.id, updatedUser);
+      } else {
+        // Add mode
+        const newUser = {
+          email,
+          username,
+        };
+
+        console.log('Creating new user with the following values:', newUser);
+
+        await userDataService.create(newUser);
+      }
+
+      console.log('User saved successfully.');
+      setIsModalUpdateOpen(false);
+      setSelectedUser(null); // Clear the selected user
+      retrieveUsers();
+    } catch (error) {
+      console.error('Error saving user:', error);
+      // Handle error here
+    }
   };
 
   const handleSendRecompense = () => {
@@ -86,7 +159,7 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
               <select name="" id="">
                 <option value="">ID</option>
               </select>
-              <button style={{cursor:'pointer'}}>Add user</button>
+              <button style={{ cursor: 'pointer' }} onClick={() => handleAddUser()}>Add user</button>
             </div>
             <div className="browse">
               <input
@@ -137,7 +210,9 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
                     </td>
                     <td>
                       <div className="actions">
-                        <span className="lab la-telegram-plane" style={{cursor:'pointer'}} onClick={() => showAlert(user.id)} />
+                        <span className="lab la-telegram-plane" style={{ cursor: 'pointer' }} onClick={() => showAlert(user.id)} />
+                        <span className="la la-pencil" style={{ cursor: 'pointer', color: 'green' }} onClick={() => handleUpdateUser(user)} />
+                        <span className="las la-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => showAlertDelete(user.id)} />
                       </div>
                     </td>
                   </tr>
@@ -149,6 +224,26 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
       </div>
 
       {/* Delete Modal Popup */}
+      <Modal
+        isOpen={isPopupVisible}
+        onRequestClose={handleClosePopup}
+        contentLabel="Delete User"
+        className={styles.popupContainer}
+        overlayClassName={styles.popupOverlay}
+      >
+        <h2 className={styles.popupTitle}>Delete User</h2>
+        <p className={styles.popupMessage}>Are you sure you want to delete this user?</p>
+        <div className={styles.popupButtons}>
+          <button className={`${styles.popupButton} ${styles.popupButtonPrimary}`} onClick={() => handleDeleteUser(userIdToDelete)}>
+            Delete
+          </button>
+          <button className={`${styles.popupButton} ${styles.popupButtonSecondary}`} onClick={handleClosePopupDelete}>
+            Cancel
+          </button>
+        </div>
+      </Modal>
+
+      {/* send recompence Modal Popup */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={handleClosePopup}
@@ -167,8 +262,6 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
           </button>
         </div>
       </Modal>
-
-
       <Modal
         isOpen={isSelectRecompenseModalOpen}
         onRequestClose={handleCloseSelectRecompenseModal}
@@ -195,7 +288,6 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
                 ))}
             </select>
           </div>
-
         </div>
         <div className={styles.popupButtons}>
           <button
@@ -213,6 +305,59 @@ const User = ({ users, retrieveUsers, recompenses, retrieveRecompenses }) => {
         </div>
       </Modal>
 
+      {/* update and save Modal Popup */}
+      <Modal
+        isOpen={isModalUpdateOpen}
+        onRequestClose={() => setIsModalUpdateOpen(false)}
+        contentLabel={selectedUser ? "Update User" : "Add User"} // Update the label
+        className={styles.popupContainer}
+        overlayClassName={styles.popupOverlay}
+      >
+        <h2 className={styles.popupTitle}>
+          {selectedUser ? "Update User" : "Add User"} {/* Update the title */}
+        </h2>
+        <div className={styles.popupContentAdd}>
+          <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Username</label>
+            <div className={styles.controlAdd}>
+              <input
+                className={styles.inputAdd}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Email</label>
+            <div className={styles.controlAdd}>
+              <input
+                className={styles.inputAdd}
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={styles.popupButtonsAdd}>
+          <button
+            className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}
+            onClick={handleSaveUser}
+          >
+            Save
+          </button>
+          <button
+            className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}
+            onClick={() => {
+              setIsModalUpdateOpen(false);
+              setSelectedUser(null); // Clear the selected user when canceling
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
 
     </main>
   );
@@ -227,7 +372,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   retrieveRecompenses,
-  retrieveUsers
+  retrieveUsers,
+  deleteUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

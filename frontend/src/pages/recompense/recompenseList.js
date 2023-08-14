@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import AddRecompenseModal from './addRecompenseModal';
 import "../../assets/css/style.css";
 import { connect } from "react-redux";
-import { retrieveRecompenses, createRecompense, deleteRecompense,updateRecompense } from "../../redux/actions/recompense";
+import { retrieveRecompenses, createRecompense, deleteRecompense, updateRecompense } from "../../redux/actions/recompense";
 import styles from './modal.module.css';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import recompenseDataService from "../../services/recompense.service";
 
-const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrieveRecompenses }) => {
+const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retrieveRecompenses }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -36,7 +36,7 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
     navigate('/view-recompenses');
     handleClosePopup();
   };
-  
+
   // Define states for input fields
   const [libelle, setLibelle] = useState('');
   const [code, setCode] = useState('');
@@ -58,7 +58,7 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
     setOperateur(recompense.operateur);
     setIsModalOpen(true);
   };
-  
+
 
   const handleSaveRecompense = async () => {
     try {
@@ -71,9 +71,9 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
           operateur,
           userId,
         };
-  
+
         console.log('Updating recompense with the following values:', updatedRecompense);
-  
+
         await recompenseDataService.update(selectedRecompense.id, updatedRecompense);
       } else {
         // Add mode
@@ -83,12 +83,12 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
           operateur,
           userId,
         };
-  
+
         console.log('Creating new recompense with the following values:', newRecompense);
-  
+
         await recompenseDataService.create(newRecompense);
       }
-  
+
       console.log('Recompense saved successfully.');
       setIsModalOpen(false);
       setSelectedRecompense(null); // Clear the selected recompense
@@ -98,7 +98,7 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
       // Handle error here
     }
   };
-  
+
 
   return (
     <main>
@@ -114,7 +114,7 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
               <select name="" id="">
                 <option value="">ID</option>
               </select>
-              <button style={{cursor:'pointer'}} onClick={() => handleAddRecompense()}>Add recompense</button>
+              <button style={{ cursor: 'pointer' }} onClick={() => handleAddRecompense()}>Add recompense</button>
             </div>
             <div className="browse">
               <input
@@ -174,9 +174,9 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
                     <td>{recompense.userId}</td>
                     <td>
                       <div className="actions">
-                      <span className="la la-pencil" style={{cursor:'pointer',color:'green'}} onClick={() => handleUpdateRecompense(recompense)} />
-                      <span />
-                      <span className="las la-trash" style={{cursor:'pointer',color:'red'}} onClick={() => showAlert(recompense.id)} />
+                        <span className="la la-pencil" style={{ cursor: 'pointer', color: 'green' }} onClick={() => handleUpdateRecompense(recompense)} />
+                        <span />
+                        <span className="las la-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => showAlert(recompense.id)} />
                       </div>
                     </td>
                   </tr>
@@ -208,72 +208,72 @@ const RecompenseList = ({ recompenses, deleteRecompense,updateRecompense, retrie
       </Modal>
 
       <Modal
-  isOpen={isModalOpen}
-  onRequestClose={() => setIsModalOpen(false)}
-  contentLabel={selectedRecompense ? "Update Recompense" : "Add Recompense"} // Update the label
-  className={styles.popupContainer}
-  overlayClassName={styles.popupOverlay}
->
-  <h2 className={styles.popupTitle}>
-    {selectedRecompense ? "Update Recompense" : "Add Recompense"} {/* Update the title */}
-  </h2>
-  <div className={styles.popupContentAdd}>
-    <div className={styles.fieldAdd}>
-      <label className={styles.labelAdd}>Libelle</label>
-      <div className={styles.controlAdd}>
-        <input
-          className={styles.inputAdd}
-          type="text"
-          value={libelle}
-          onChange={(e) => setLibelle(e.target.value)}
-        />
-      </div>
-    </div>
-    <div className={styles.fieldAdd}>
-      <label className={styles.labelAdd}>Code</label>
-      <div className={styles.controlAdd}>
-        <input
-          className={styles.inputAdd}
-          type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-        />
-      </div>
-    </div>
-    <div className={styles.fieldAdd}>
-      <label className={styles.labelAdd}>Operateur</label>
-      <div className={styles.controlAdd}>
-        <select
-          className={styles.selectAdd}
-          value={operateur}
-          onChange={(e) => setOperateur(e.target.value)}
-        >
-          <option value="">Select Operateur</option>
-          <option value="Orange">Orange</option>
-          <option value="Telecom">Telecom</option>
-          <option value="Oredoo">Oredoo</option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div className={styles.popupButtonsAdd}>
-    <button
-      className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}
-      onClick={handleSaveRecompense}
-    >
-      Save
-    </button>
-    <button
-      className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}
-      onClick={() => {
-        setIsModalOpen(false);
-        setSelectedRecompense(null); // Clear the selected recompense when canceling
-      }}
-    >
-      Cancel
-    </button>
-  </div>
-</Modal>
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel={selectedRecompense ? "Update Recompense" : "Add Recompense"} // Update the label
+        className={styles.popupContainer}
+        overlayClassName={styles.popupOverlay}
+      >
+        <h2 className={styles.popupTitle}>
+          {selectedRecompense ? "Update Recompense" : "Add Recompense"} {/* Update the title */}
+        </h2>
+        <div className={styles.popupContentAdd}>
+          <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Libelle</label>
+            <div className={styles.controlAdd}>
+              <input
+                className={styles.inputAdd}
+                type="text"
+                value={libelle}
+                onChange={(e) => setLibelle(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Code</label>
+            <div className={styles.controlAdd}>
+              <input
+                className={styles.inputAdd}
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Operateur</label>
+            <div className={styles.controlAdd}>
+              <select
+                className={styles.selectAdd}
+                value={operateur}
+                onChange={(e) => setOperateur(e.target.value)}
+              >
+                <option value="">Select Operateur</option>
+                <option value="Orange">Orange</option>
+                <option value="Telecom">Telecom</option>
+                <option value="Oredoo">Oredoo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div className={styles.popupButtonsAdd}>
+          <button
+            className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}
+            onClick={handleSaveRecompense}
+          >
+            Save
+          </button>
+          <button
+            className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}
+            onClick={() => {
+              setIsModalOpen(false);
+              setSelectedRecompense(null); // Clear the selected recompense when canceling
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
 
 
     </main>
