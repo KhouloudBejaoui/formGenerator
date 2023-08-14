@@ -103,8 +103,8 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
   return (
     <main>
       <div className="page-header">
-        <h1>Recompenses</h1>
-        <small>Home / Recompenses</small>
+        <h1>Rewards</h1>
+        <small>Home / Rewards</small>
       </div>
       <div className="page-content">
         <div className="records table-responsive">
@@ -114,7 +114,7 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
               <select name="" id="">
                 <option value="">ID</option>
               </select>
-              <button style={{ cursor: 'pointer' }} onClick={() => handleAddRecompense()}>Add recompense</button>
+              <button style={{ cursor: 'pointer' }} onClick={() => handleAddRecompense()}>Add reward</button>
             </div>
             <div className="browse">
               <input
@@ -133,7 +133,7 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
                 <tr>
                   <th>ID</th>
                   <th>
-                    <span className="las la-sort" /> RECOMPENSE
+                    <span className="las la-sort" /> REWARD
                   </th>
                   <th>
                     <span className="las la-sort" /> CODE
@@ -191,12 +191,12 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
       <Modal
         isOpen={isPopupVisible}
         onRequestClose={handleClosePopup}
-        contentLabel="Delete Recompense"
+        contentLabel="Delete Reward"
         className={styles.popupContainer}
         overlayClassName={styles.popupOverlay}
       >
-        <h2 className={styles.popupTitle}>Delete Recompense</h2>
-        <p className={styles.popupMessage}>Are you sure you want to delete this recompense?</p>
+        <h2 className={styles.popupTitle}>Delete Reward</h2>
+        <p className={styles.popupMessage}>Are you sure you want to delete this reward?</p>
         <div className={styles.popupButtons}>
           <button className={`${styles.popupButton} ${styles.popupButtonPrimary}`} onClick={() => handleDeleteRecompense(recompenseIdToDelete)}>
             Delete
@@ -210,12 +210,12 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        contentLabel={selectedRecompense ? "Update Recompense" : "Add Recompense"} // Update the label
+        contentLabel={selectedRecompense ? "Update Reward" : "Add Reward"} // Update the label
         className={styles.popupContainer}
         overlayClassName={styles.popupOverlay}
       >
         <h2 className={styles.popupTitle}>
-          {selectedRecompense ? "Update Recompense" : "Add Recompense"} {/* Update the title */}
+          {selectedRecompense ? "Update Reward" : "Add Reward"} {/* Update the title */}
         </h2>
         <div className={styles.popupContentAdd}>
           <div className={styles.fieldAdd}>

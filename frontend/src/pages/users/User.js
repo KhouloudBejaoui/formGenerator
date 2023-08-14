@@ -24,10 +24,11 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
 
   useEffect(() => {
     retrieveUsers();
+    retrieveRecompenses();
   }, []);
 
   const showAlert = (userId) => {
-    setSelectedUserId(userId); // Set the selected user ID
+    setSelectedUserId(userId); 
     setIsModalOpen(true);
   };
   const handleClosePopup = () => {
@@ -36,7 +37,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
 
   const showAlertDelete = (userId) => {
     setPopupVisible(true);
-    setUserIdToDelete(userId); // Set the formIdToDelete when the delete icon is clicked
+    setUserIdToDelete(userId); 
   };
   const handleClosePopupDelete = () => {
     setPopupVisible(false);
@@ -265,24 +266,24 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
       <Modal
         isOpen={isSelectRecompenseModalOpen}
         onRequestClose={handleCloseSelectRecompenseModal}
-        contentLabel="Select Recompense"
+        contentLabel="Select Reward"
         className={styles.popupContainer}
         overlayClassName={styles.popupOverlay}
       >
-        <h2 className={styles.popupTitle}>Select Recompense</h2>
+        <h2 className={styles.popupTitle}>Select Reward</h2>
         <div className={styles.fieldAdd}>
-          <label className={styles.labelAdd}>Recompense</label>
+          <label className={styles.labelAdd}>Reward</label>
           <div className={styles.controlAdd}>
             <select
               className={styles.selectAdd}
               value={selectedRecompense}
               onChange={(e) => setSelectedRecompense(e.target.value)}
             >
-              <option value="">Select Recompense</option>
+              <option value="">Select Reward</option>
               {recompenses
-                ?.filter(recompense => recompense.isSended === null)
+                ?.filter(recompense => recompense.isSended === null || recompense.isSended == 0 )
                 .map((recompense) => (
-                  <option key={recompense.id} value={recompense.libelle}>
+                  <option key={recompense.id} value={recompense.id}>
                     {recompense.libelle}
                   </option>
                 ))}
