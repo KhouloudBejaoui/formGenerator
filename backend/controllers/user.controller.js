@@ -143,3 +143,34 @@ exports.findAllAnswered = (req, res) => {
         });
       });
   };
+
+
+// import excel file to save new users
+exports.uploadUsers = async (req, res) => {
+  const usersData  = req.body;
+  
+  try {
+    for (const userData of usersData) {
+      const existingUser = await User.findOne({ where: { email: userData.email } });
+
+      if (existingUser) {
+        console.log(`Skipping user with email ${userData.email}, already exists.`);
+        continue; // Skip saving this user
+      }
+
+      const newUser = {
+        username: userData.username,
+        email: userData.email,
+        hasAnswered: false
+      };
+
+      // Create a new user entry
+      await User.create(newUser);
+    }
+
+    res.status(200).json({ message: 'Users uploaded successfully' });
+  } catch (error) {
+    console.error('Error uploading users:', error);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};

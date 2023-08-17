@@ -28,6 +28,10 @@ class UserDataService {
   findByTitle(username) {
     return http.get(`/users?username=${username}`);
   }
+
+  importUsers(usersData) {
+    return http.post('/users/import',usersData);
+  }
 }
 
 export default new UserDataService();

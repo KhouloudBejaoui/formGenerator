@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import AddRecompenseModal from './addRecompenseModal';
 import "../../assets/css/style.css";
 import { connect } from "react-redux";
 import { retrieveRecompenses, createRecompense, deleteRecompense, updateRecompense } from "../../redux/actions/recompense";
@@ -155,7 +154,7 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
               <tbody>
                 {recompenses?.map((recompense) => (
                   <tr key={recompense.id}>
-                    <td>#{recompense.id}</td>
+                    <td>{recompense.id}</td>
                     <td>
                       <div className="client">
 

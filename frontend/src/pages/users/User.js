@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { retrieveRecompenses } from "../../redux/actions/recompense";
 import recompenseDataService from "../../services/recompense.service";
 import userDataService from "../../services/user.service";
-
+import * as XLSX from 'xlsx';
 const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompenses }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRecompense, setSelectedRecompense] = useState(null);
@@ -21,6 +21,12 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
+  // State to manage the modal
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  // State to store the selected file
+  const [selectedFile, setSelectedFile] = useState(null);
+
 
   useEffect(() => {
     retrieveUsers();
@@ -28,7 +34,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
   }, []);
 
   const showAlert = (userId) => {
-    setSelectedUserId(userId); 
+    setSelectedUserId(userId);
     setIsModalOpen(true);
   };
   const handleClosePopup = () => {
@@ -37,7 +43,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
 
   const showAlertDelete = (userId) => {
     setPopupVisible(true);
-    setUserIdToDelete(userId); 
+    setUserIdToDelete(userId);
   };
   const handleClosePopupDelete = () => {
     setPopupVisible(false);
@@ -146,6 +152,52 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
     setIsSelectRecompenseModalOpen(false);
   };
 
+  // Function to handle file selection
+  const handleFileSelect = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  // Function to handle file upload
+  const handleFileUpload = async () => {
+    if (selectedFile) {
+      try {
+        const fileReader = new FileReader();
+  
+        // Read the Excel file
+        fileReader.onload = async (event) => {
+          const data = event.target.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+  
+          // Assuming data is in the first sheet
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+  
+          // Convert sheet data to JSON format
+          const jsonData = XLSX.utils.sheet_to_json(sheet);
+  
+          // Send the JSON data to the backend API
+          try {
+            await userDataService.importUsers(jsonData);
+            // Refresh the user list
+            retrieveUsers();
+            // Close the modal
+            setIsImportModalOpen(false);
+          } catch (error) {
+            console.error('Error uploading file:', error);
+            // Handle error here
+          }
+        };
+  
+        fileReader.readAsBinaryString(selectedFile);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        // Handle error here
+      }
+    }
+  };
+  
+
+
   return (
     <main>
       <div className="page-header">
@@ -161,6 +213,9 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
                 <option value="">ID</option>
               </select>
               <button style={{ cursor: 'pointer' }} onClick={() => handleAddUser()}>Add user</button>
+              <button style={{ cursor: 'pointer', marginLeft:"10px" }} onClick={() => setIsImportModalOpen(true)}>
+                Import Users from Excel
+              </button>
             </div>
             <div className="browse">
               <input
@@ -195,7 +250,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
               <tbody>
                 {users?.map((user) => (
                   <tr key={user.id}>
-                    <td>#{user.id}</td>
+                    <td>{user.id}</td>
                     <td>
                       <div className="client">
                         <div className="client-info">
@@ -281,7 +336,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
             >
               <option value="">Select Reward</option>
               {recompenses
-                ?.filter(recompense => recompense.isSended === null || recompense.isSended == 0 )
+                ?.filter(recompense => recompense.isSended === null || recompense.isSended == 0)
                 .map((recompense) => (
                   <option key={recompense.id} value={recompense.libelle}>
                     {recompense.libelle}
@@ -358,6 +413,26 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
             Cancel
           </button>
         </div>
+      </Modal>
+
+
+      <Modal
+        isOpen={isImportModalOpen}
+        onRequestClose={() => setIsImportModalOpen(false)}
+        contentLabel="Import Users"
+        className={styles.popupContainer}
+        overlayClassName={styles.popupOverlay}
+      >
+        <h2 className={styles.popupTitle}>Import Users from Excel</h2>
+        <div className={styles.fieldAdd}>
+        <input type="file" accept=".xlsx, .xls" onChange={handleFileSelect} />
+        </div>
+        
+        <div className={styles.popupButtonsAdd}>
+        <button onClick={handleFileUpload}className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}>Upload and Save</button>
+        <button onClick={() => setIsImportModalOpen(false)} className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}>Cancel</button>
+        </div>
+        
       </Modal>
 
     </main>

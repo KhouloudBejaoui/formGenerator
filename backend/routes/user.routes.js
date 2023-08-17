@@ -23,6 +23,9 @@ module.exports = app => {
   
     // Delete all Users
     router.delete("/", users.deleteAll);
+
+    // upload Users with excel file
+    router.post('/import', users.uploadUsers);
   
     app.use('/api/users', router);
   };
