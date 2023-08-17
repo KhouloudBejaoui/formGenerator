@@ -8,13 +8,16 @@ const Excel = require('exceljs');
 
 // Function to save a user's response and export it to an Excel file
 exports.saveUserResponseAndExport = async (req, res) => {
-    const { userId, formId, questions } = req.body;
+    const { userId, formId, questions, responseDuration,percentageAnswered } = req.body;
     console.log('Received data from frontend:', req.body);
     try {
         // Save the user's response to the database
         const response = await Response.create({
             userId,
             formId,
+            responseDuration,
+            percentageAnswered,
+            
         });
 
         // Update the user's hasAnswered attribute to true
@@ -111,6 +114,8 @@ exports.getResponsesByFormId = async (req, res) => {
                 userId: response.userId,
                 formId: response.formId,
                 responseItems: processedItems,
+                responseDuration: response.responseDuration,
+                percentageAnswered:response.percentageAnswered,
             };
         });
 
@@ -135,7 +140,6 @@ exports.saveExcelFile = async (req, res) => {
 };
 
 
-// Backend Controller
 exports.checkUserResponse = async (req, res) => {
     const userId = req.params.userId;
     const formId = req.params.formId;

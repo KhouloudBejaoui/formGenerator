@@ -94,11 +94,11 @@ function FormDetails() {
       // Call the backend API to send emails to all users
       const response = await formDataService.sendFormEmail(formId);
       console.log(response.data); // Assuming the response from the backend is { message: 'Emails sent successfully.' }
-      
+
       setAlertType('alert-success');
       setAlertMessage('Emails sent successfully!');
       setShowAlert(true);
-      
+
       // Hide the alert after 3 seconds (3000 milliseconds)
       setTimeout(() => {
         setShowAlert(false);
@@ -108,14 +108,14 @@ function FormDetails() {
       setAlertType('alert-error');
       setAlertMessage('An error occurred while sending emails.');
       setShowAlert(true);
-      
+
       // Hide the alert after 3 seconds (3000 milliseconds)
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
     }
   }
-  
+
 
 
 
@@ -135,7 +135,7 @@ function FormDetails() {
         <small>Home / View Form</small>
       </div>
       <div className={styles.submit}>
-      {showAlert && <div className={`${styles.alert} ${styles[alertType]}`}>{alertMessage}</div>}
+        {showAlert && <div className={`${styles.alert} ${styles[alertType]}`}>{alertMessage}</div>}
         <div className={styles.user_form}>
           <div className={styles.user_form_section}>
             <div className={styles.user_title_section}>
@@ -152,7 +152,32 @@ function FormDetails() {
                     <div style={{ display: 'flex' }}>
                       <div className={styles["form-check"]}>
                         {question.questionType !== "radio" ? (
-                          question.questionType !== 'text' ? (
+                          question.questionType === 'text' ? (
+                            <label>
+                              <input
+                                type={question.questionType}
+                                name={qindex}
+                                /* value={ques.optionText} value={answer[qindex].answer} */
+                                className={styles["form-check-input"]}
+                                required={question.required}
+                                style={{ margnLeft: "5px", marginRight: "5px" }}
+                                onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                              /> {ques.optionText}
+                            </label>
+                          ) : question.questionType === 'number' || question.questionType === 'percentage' ? (
+                            <label>
+                              <input
+                                type="number"
+                                name={qindex}
+                                /*value={answer[qindex].answer}*/
+                                className={styles["form-check-input"]}
+                                required={question.required}
+                                style={{ margnLeft: "5px", marginRight: "5px" }}
+                                onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                              />
+                              {ques.optionText}
+                            </label>
+                          ) : (
                             <label>
                               <input
                                 type={question.questionType}
@@ -161,19 +186,9 @@ function FormDetails() {
                                 className={styles["form-check-input"]}
                                 required={question.required}
                                 style={{ margnLeft: "5px", marginRight: "5px" }}
-                                onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
-                              /> {ques.optionText}
-                            </label>) : (
-                            <label>
-                              <input
-                                type={question.questionType}
-                                name={qindex}
-                                /*value={ques.optionText}   value={answer[qindex].answer} */
-                                className={styles["form-check-input"]}
-                                required={question.required}
-                                style={{ margnLeft: "5px", marginRight: "5px" }}
-                                onChange={(e) => { selectinput(question.questionText, e.target.value) }}
-                              /> {ques.optionText}
+                                onChange={() => { select(question.questionText, ques.optionText) }}
+                              />
+                              {ques.optionText}
                             </label>
                           )
                         ) : (
@@ -196,6 +211,7 @@ function FormDetails() {
                 ))}
               </div>
             ))}
+
             <div className={styles.user_form_submit}>
               <Button variant="contained" color="primary" onClick={submit} style={{ fontSize: "14px" }}>Send to users</Button>
             </div>
@@ -216,3 +232,11 @@ function FormDetails() {
 }
 
 export default FormDetails;
+
+
+
+
+
+
+
+

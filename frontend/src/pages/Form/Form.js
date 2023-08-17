@@ -21,6 +21,7 @@ import FilterNoneIcon from "@material-ui/icons/FilterNone";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import ShortTextIcon from "@material-ui/icons/ShortText";
 import SubjectIcon from "@material-ui/icons/Subject";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import TextFieldsIcon from "@material-ui/icons/TextFields";
 import OndemandVideoIcon from "@material-ui/icons/OndemandVideo";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
@@ -62,19 +63,18 @@ const initialState = {
 const Form = () => {
 
   const { id } = useParams();
-  const state = useSelector((state) => state); // Replace 'state' with your specific state slice if needed
+  const state = useSelector((state) => state); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [questions, setQuestions] = useState(
     [{
-      questionText: "which is the capital of Tunisia ? ",
+      questionText: "Question ",
       questionType: "radio",
       options: [
-        { optionText: "Tunis" },
-        { optionText: "Sousse" },
-        { optionText: "Ariana" },
-        { optionText: "Sfax" }
+        { optionText: "" },
+        { optionText: "" },
+
       ],
       answer: false,
       answerKey: "",
@@ -159,7 +159,7 @@ const Form = () => {
     if (optionsOfQuestion[i].options.length < 20) {
       optionsOfQuestion[i].options.push({ optionText: "option" + (optionsOfQuestion[i].options.length + 1) })
     } else {
-      console.log("max 5 options");
+      console.log("max 20 options");
     }
     setQuestions(optionsOfQuestion)
   }
@@ -188,7 +188,7 @@ const Form = () => {
 
   function addMoreQuestionField() {
     expandCloseAll();
-    setQuestions([...questions, { questionText: "Question", questionType: "radio", options: [{ optionText: "option 1" }], open: true, required: false }])
+    setQuestions([...questions, { questionText: "Question", questionType: "radio", options: [{ optionText: "" }], open: true, required: false }])
   }
 
   function onDragEnd(result) {
@@ -364,29 +364,59 @@ const Form = () => {
                         <AccordionDetails className={styles.add_question}>
                           <div className={styles.add_question_top}>
                             <input type="text" className={styles.question} placeholder="Question" value={ques.questionText} onChange={(e) => { changeQuestion(e.target.value, i) }} />
-                            <CropOriginalIcon style={{ color: "#5f6368" }} />
+                            {/*<CropOriginalIcon style={{ color: "#5f6368" }} />*/}
                             <Select className={styles.select} style={{ color: "#5f6368", fontSize: "13px" }}>
                               <MenuItem id="text" value="Text" onClick={() => { addQuestionType(i, "text") }}> <SubjectIcon style={{ marginRight: "10px" }} />Text input</MenuItem>
                               <MenuItem id="checkbox" value="Checkbox" onClick={() => { addQuestionType(i, "checkbox") }}><CheckBoxIcon style={{ marginRight: "10px", color: "#70757a" }} checked /> Checkboxes</MenuItem>
                               <MenuItem id="radio" value="Radio" onClick={() => { addQuestionType(i, "radio") }}> <Radio style={{ marginRight: "10px", color: "#70757a" }} checked />Multiple choice</MenuItem>
+                              <MenuItem id="number" value="Number" onClick={() => { addQuestionType(i, "number") }}> <Typography variant="body1">
+                                <span style={{ fontSize: '1.5em', marginRight: '5px' }}>#</span>
+                                Number input
+                              </Typography></MenuItem>
+                              <MenuItem id="percentage" value="Percentage" onClick={() => { addQuestionType(i, "percentage") }}>       <Typography variant="body1">
+                                <span style={{ fontSize: '1.5em', marginRight: '5px' }}>%</span>
+                                Percentage input
+                              </Typography></MenuItem>
                             </Select>
                           </div>
                           {ques.options.map((op, j) => (
                             <div className={styles.add_question_body} key={j}>
-                              {
-                                (ques.questionType !== "text") ?
-                                  <input type={ques.questionType} style={{ marginRight: "10px" }} /> :
-                                  <ShortTextIcon style={{ marginRight: "10px" }} />
-                              }
-                              <div>
-                                <input type='text' className={styles.text_input} placeholder='option' value={ques.options[j].optionText} onChange={(e) => { changeOptionValue(e.target.value, i, j) }}></input>
-                              </div>
-                              <CropOriginalIcon style={{ color: "#5f6368" }} />
-                              <IconButton aria-label='delete'>
-                                <CloseIcon onClick={() => { removeOption(i, j) }} />
-                              </IconButton>
+                              {(ques.questionType !== "text") ? (
+                                <input type={ques.questionType} style={{ marginRight: "10px" }} />
+                              ) : (
+                                <ShortTextIcon style={{ marginRight: "10px" }} />
+                              )}
+
+                              {(ques.questionType !== "number" && ques.questionType !== "percentage") && (
+                                <div>
+                                  <input
+                                    type={(ques.questionType === "number" && ques.questionType === "percentage") ? "number" : "text"}
+                                    className={styles.text_input}
+                                    placeholder={ques.questionType === "number" ? "Number" : "Option"}
+                                    value={ques.options[j].optionText}
+                                    onChange={(e) => { changeOptionValue(e.target.value, i, j) }}
+                                  />
+                                </div>
+                              )}
+
+                              {(ques.questionType === "number" || ques.questionType === "percentage") ? (
+                                <>
+                                  <IconButton aria-label='delete'>
+                                    <CloseIcon onClick={() => { removeOption(i, j) }} />
+                                  </IconButton>
+                                </>
+                              ) : (
+                                <>
+                                  {/*<CropOriginalIcon style={{ color: "#5f6368" }} />*/}
+                                  <IconButton aria-label='delete'>
+                                    <CloseIcon onClick={() => { removeOption(i, j) }} />
+                                  </IconButton>
+                                </>
+                              )}
                             </div>
                           ))}
+
+
                           {
                             ques.options.length < 20 ? (
                               <div className={styles.add_question_body}>

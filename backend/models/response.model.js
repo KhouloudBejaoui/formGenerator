@@ -10,6 +10,14 @@ module.exports = (sequelize, Sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        responseDuration: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        percentageAnswered: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
     });
 
 

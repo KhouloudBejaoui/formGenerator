@@ -3,6 +3,8 @@ const Recompense = db.recompenses;
 const Op = db.Sequelize.Op;
 const User = db.users;
 const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Create and Save a new Recompense
 exports.create = (req, res) => {
@@ -153,13 +155,13 @@ exports.sendRecompenseByEmail = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-        user: 'iace.surveymail@gmail.com',
-        pass: 'sovlexpprtmwgula'
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
 
     const mailOptions = {
-      from: 'iace.surveymail@gmail.com',
+      from: process.env.EMAIL,
       to: user.email,
       subject: 'Reward Code',
       text: `Dear ${user.username},\n\nThanks for your response to our form ! \n\nYou've been rewarded with the recompense: ${recompense.libelle} of the operator ${recompense.operateur} (Code: ${recompense.code}).\n\nThank you!`

@@ -283,7 +283,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
               {recompenses
                 ?.filter(recompense => recompense.isSended === null || recompense.isSended == 0 )
                 .map((recompense) => (
-                  <option key={recompense.id} value={recompense.id}>
+                  <option key={recompense.id} value={recompense.libelle}>
                     {recompense.libelle}
                   </option>
                 ))}

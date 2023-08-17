@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const User = db.users;
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Function to save a new form and its questions in the database
 exports.saveForm = async (req, res) => {
@@ -330,8 +332,8 @@ exports.sendEmailToAllUsers = async (req, res) => {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'iace.surveymail@gmail.com',
-          pass: 'sovlexpprtmwgula',
+            user: process.env.EMAIL, 
+            pass: process.env.EMAIL_PASSWORD
         },
       });
   
@@ -352,7 +354,7 @@ exports.sendEmailToAllUsers = async (req, res) => {
         const formUrl = `${formUrlBase}/${userId}/${formId}`; // Construct the complete URL
   
         const mailOptions = {
-          from: 'iace.surveymail@gmail.com',
+          from: process.env.EMAIL,
           to: user.email, // User's email
           subject: 'Form Response Link',
           text: `Dear ${user.username},\n\nYou can submit your response for the form at the following link: ${formUrl}\n\nBest Regards,\nIACE`,

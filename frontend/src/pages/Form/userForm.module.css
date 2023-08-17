@@ -55,6 +55,10 @@ margin-bottom: 8px;
     font-weight: 500;
 }
 
+.invalidInput {
+    border: 2px solid red;
+  }
+  
 
 /*form details*/
 

@@ -11,15 +11,18 @@ function Userform() {
 
   const [hasAnswered, setHasAnswered] = useState(false);
   const [answer, setAnswer] = useState([]);
-  const navigate = useNavigate(); // Add the missing 'navigate' variable
+  const navigate = useNavigate();
   const { userId, formId } = useParams();
   const isLoading = useSelector((state) => state.form.loading);
   const error = useSelector((state) => state.form.error);
   const dispatch = useDispatch();
   const formDetails = useSelector((state) => state.form.formDetails);
+  const [invalidInputs, setInvalidInputs] = useState([]);
+  const [startTime, setStartTime] = useState(0);
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
+    setStartTime(performance.now());
   }, [dispatch, formId]);
 
   useEffect(() => {
@@ -106,46 +109,73 @@ function Userform() {
   // Inside the submit() response function
   async function submit() {
     const post_answer_data = {};
-    let allQuestionsAnswered = true; // Initialize the flag for checking all questions
+    let allQuestionsAnswered = true;
+    let validAnswers = true;
+    const invalidInputList = [];
 
     answer.forEach((ele) => {
       post_answer_data[ele.question] = ele.answer;
-      if (ele.answer === '' && questions.find(question => question.questionText === ele.question).required) {
-        allQuestionsAnswered = false; // Set the flag to false if a required question is unanswered
+
+      const question = questions.find((q) => q.questionText === ele.question);
+      if (question && question.questionType === 'percentage') {
+        const parsedAnswer = parseFloat(ele.answer);
+
+        if (parsedAnswer < 0 || parsedAnswer > 100) {
+          validAnswers = false;
+          invalidInputList.push(ele.question);
+        }
       }
     });
 
-    console.log('formDetails:', formDetails);
+    setInvalidInputs(invalidInputList);
 
     if (!allQuestionsAnswered) {
       setAlertType('alert-error');
       setAlertMessage('Please answer all the required questions.');
       setShowAlert(true);
-      // Hide the alert after 3 seconds (3000 milliseconds)
       setTimeout(() => {
         setShowAlert(false);
       }, 5000);
-      return; // Do not proceed with submission
+      return;
     }
 
+    if (!validAnswers) {
+      setAlertType('alert-error');
+      setAlertMessage('Please provide valid percentage values (0-100) for percentage questions.');
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+      return;
+    }
+
+    const endTime = performance.now(); // Get the current time when the user submits
+
+    const responseDuration = endTime - startTime; // Calculate the duration in milliseconds
+
     try {
-      // Send user response to the server to save in the database
+      // Calculate the percentage of answered questions
+      const totalQuestions = formDetails.questions.length;
+      const answeredQuestions = answer.filter((ele) => ele.answer !== '' && ele.answer !== null && ele.answer !== undefined).length;
+      console.log(answeredQuestions);
+      // Calculate the percentage considering unanswered questions as 0%
+      const percentageAnswered = (answeredQuestions / totalQuestions) * 100;
+
       const response = await responseDataService.saveUserResponse({
         userId: userId,
         formId: formId,
         questions: formDetails.questions.map((question) => {
-          console.log("questionId:", question.questionId); // Log the questionId
-
-          // Find the selected option in the options array and get its optionId
           const selectedOption = question.options.find((option) => option.optionText === post_answer_data[question.questionText]);
           const optionId = selectedOption ? selectedOption.optionId : null;
 
           return {
             questionId: question.questionId,
-            optionId: optionId, // Pass the optionId
+            optionId: optionId,
             textResponse: post_answer_data[question.questionText],
           };
         }),
+        responseDuration: responseDuration,
+        percentageAnswered: percentageAnswered,
       });
 
       navigate(`/done`);
@@ -153,6 +183,7 @@ function Userform() {
       console.error('Error saving user response:', error);
     }
   }
+
 
 
   if (isLoading) {
@@ -188,28 +219,47 @@ function Userform() {
                       <div style={{ display: 'flex' }}>
                         <div className={styles["form-check"]}>
                           {question.questionType !== "radio" ? (
-                            question.questionType !== 'text' ? (
+                            question.questionType === 'text' ? (
                               <label>
                                 <input
-                                  type={question.questionType}
+                                  type="text"
+                                  name={qindex}
+                                  className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
+                                  required={question.required}
+                                  style={{ marginLeft: "5px", marginRight: "5px" }}
+                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                                /> {question.optionText}
+                              </label>
+                            ) : question.questionType === 'number' || question.questionType === 'percentage' ? (
+                              <label>
+                                <input
+                                  type="number"
+                                  name={qindex}
+                                  className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
+                                  required={question.required}
+                                  style={{ marginLeft: "5px", marginRight: "5px" }}
+                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                                />
+                                {question.optionText}
+                                {question.questionType === 'percentage' && (
+                                  <span style={{ color: 'red' }}>{invalidInputs.includes(question.questionText) ? ' (Invalid Percentage)' : ''}</span>
+                                )}
+                              </label>
+                            ) : (
+                              <label>
+                                <input
+                                  type="radio"
                                   name={qindex}
                                   value={ques.optionText}
-                                  className={styles["form-check-input"]}
+                                  className={`${styles["form-check-input"]} ${(invalidInputs.includes(question.questionText) && question.required) ? styles.invalidInput : ''}`}
                                   required={question.required}
-                                  style={{ margnLeft: "5px", marginRight: "5px" }}
-                                  onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
-                                /> {ques.optionText}
-                              </label>) : (
-                              <label>
-                                <input
-                                  type={question.questionType}
-                                  name={qindex}
-                                  /*value={ques.optionText}   value={answer[qindex].answer} */
-                                  className={styles["form-check-input"]}
-                                  required={question.required}
-                                  style={{ margnLeft: "5px", marginRight: "5px" }}
-                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
-                                /> {ques.optionText}
+                                  style={{ marginLeft: "5px", marginRight: "5px" }}
+                                  onChange={() => { select(question.questionText, ques.optionText) }}
+                                />
+                                {ques.optionText}
+                                {question.required && (
+                                  <span style={{ color: 'red' }}>{invalidInputs.includes(question.questionText) ? '(Required)' : ''}</span>
+                                )}
                               </label>
                             )
                           ) : (
@@ -218,12 +268,15 @@ function Userform() {
                                 type={question.questionType}
                                 name={qindex}
                                 value={ques.optionText}
-                                className={styles["form-check-input"]}
+                                className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
                                 required={question.required}
                                 style={{ margnLeft: "5px", marginRight: "5px" }}
                                 onChange={() => { select(question.questionText, ques.optionText) }}
                               />
                               {ques.optionText}
+                              {question.required && (
+                                <span style={{ color: 'red' }}>{invalidInputs.includes(question.questionText) ? '(Required)' : ''}</span>
+                              )}
                             </label>
                           )}
                         </div>
@@ -232,6 +285,7 @@ function Userform() {
                   ))}
                 </div>
               ))}
+
               <div className={styles.user_form_submit}>
                 <Button variant="contained" color="primary" onClick={submit} style={{ fontSize: "14px" }}>Submit</Button>
               </div>
@@ -442,3 +496,12 @@ function Userform() {
 
 export default Userform;
 */
+
+
+
+
+
+
+
+
+

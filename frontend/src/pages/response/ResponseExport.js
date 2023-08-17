@@ -31,11 +31,11 @@ const ResponseExport = () => {
       // Create a new workbook
       const workbook = XLSX.utils.book_new();
       const sheetName = 'Responses';
-      const worksheetData = [['USER ID', ...responsesData[0].responseItems.map(item => item.questionText)]];
+      const worksheetData = [['USER ID','RESPONSE DURATION (ms)','percentageAnswered', ...responsesData[0].responseItems.map(item => item.questionText)]];
   
       // Add data to the worksheet
       responsesData.forEach(response => {
-        const rowData = [response.userId, ...response.responseItems.map(item => item.textResponse)];
+        const rowData = [response.userId, response.responseDuration,response.percentageAnswered, ...response.responseItems.map(item => item.textResponse)];
         worksheetData.push(rowData);
       });
   
@@ -71,6 +71,27 @@ const ResponseExport = () => {
     return buf;
   };
 
+  function formatDuration(durationInMillis) {
+    const millisecondsPerSecond = 1000;
+    const millisecondsPerMinute = millisecondsPerSecond * 60;
+    const millisecondsPerHour = millisecondsPerMinute * 60;
+    const millisecondsPerDay = millisecondsPerHour * 24;
+  
+    const days = Math.floor(durationInMillis / millisecondsPerDay);
+    const hours = Math.floor((durationInMillis % millisecondsPerDay) / millisecondsPerHour);
+    const minutes = Math.floor((durationInMillis % millisecondsPerHour) / millisecondsPerMinute);
+    const seconds = Math.floor((durationInMillis % millisecondsPerMinute) / millisecondsPerSecond);
+  
+    const parts = [];
+    if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+    if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+    if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+    if (seconds > 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+  
+    if (parts.length === 0) return 'less than a second';
+    return parts.join(', ');
+  }
+  
   return (
     <main>
       <div className="page-header">
@@ -105,6 +126,12 @@ const ResponseExport = () => {
                   <th>
                     USER ID
                   </th>
+                  <th>
+                    DURATION
+                  </th>
+                  <th>
+                    PERCENTAGE ANSWERED
+                  </th>
                   {responsesData.length > 0 && (
                     responsesData[0].responseItems.map((item) => (
                       <th key={item.questionId}>
@@ -120,6 +147,16 @@ const ResponseExport = () => {
                     <td>
                       <div className="client-info">
                         <h4>{res.userId}</h4>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="client-info">
+                        <h4>{formatDuration(res.responseDuration)}</h4>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="client-info">
+                        <h4>{res.percentageAnswered}%</h4>
                       </div>
                     </td>
                     {responsesData.length > 0 && (
