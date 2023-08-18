@@ -157,7 +157,7 @@ const Form = () => {
   function addOption(i) {
     var optionsOfQuestion = [...questions];
     if (optionsOfQuestion[i].options.length < 20) {
-      optionsOfQuestion[i].options.push({ optionText: "option" + (optionsOfQuestion[i].options.length + 1) })
+      optionsOfQuestion[i].options.push({ optionText: "" })
     } else {
       console.log("max 20 options");
     }

@@ -17,6 +17,9 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
@@ -162,19 +165,19 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
     if (selectedFile) {
       try {
         const fileReader = new FileReader();
-  
+
         // Read the Excel file
         fileReader.onload = async (event) => {
           const data = event.target.result;
           const workbook = XLSX.read(data, { type: 'binary' });
-  
+
           // Assuming data is in the first sheet
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
-  
+
           // Convert sheet data to JSON format
           const jsonData = XLSX.utils.sheet_to_json(sheet);
-  
+
           // Send the JSON data to the backend API
           try {
             await userDataService.importUsers(jsonData);
@@ -187,7 +190,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
             // Handle error here
           }
         };
-  
+
         fileReader.readAsBinaryString(selectedFile);
       } catch (error) {
         console.error('Error uploading file:', error);
@@ -195,8 +198,20 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
       }
     }
   };
-  
 
+  const filterUsers = (filterValue) => {
+    setIsFiltered(true);
+
+    if (filterValue === 'answered') {
+      setFilteredUsers(users.filter(user => user.hasAnswered));
+    } else if (filterValue === 'not_answered') {
+      setFilteredUsers(users.filter(user => !user.hasAnswered));
+    } else {
+      // Reset filtering
+      setIsFiltered(false);
+      setFilteredUsers([]);
+    }
+  };
 
   return (
     <main>
@@ -208,13 +223,10 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
         <div className="records table-responsive">
           <div className="record-header">
             <div className="add">
-              <span>Entries</span>
-              <select name="" id="">
-                <option value="">ID</option>
-              </select>
+
               <button style={{ cursor: 'pointer' }} onClick={() => handleAddUser()}>Add user</button>
-              <button style={{ cursor: 'pointer', marginLeft:"10px" }} onClick={() => setIsImportModalOpen(true)}>
-                Import Users from Excel
+              <button style={{ cursor: 'pointer', marginLeft: "10px" }} onClick={() => setIsImportModalOpen(true)}>
+                Import Users
               </button>
             </div>
             <div className="browse">
@@ -222,9 +234,17 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
                 type="search"
                 placeholder="Search"
                 className="record-search"
+                value={searchKeyword}
+                onChange={e => setSearchKeyword(e.target.value)}
               />
-              <select name="" id="">
-                <option value="">Status</option>
+              <select
+                name=""
+                id=""
+                onChange={(e) => filterUsers(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="answered">Answered</option>
+                <option value="not_answered">Not Answered</option>
               </select>
             </div>
           </div>
@@ -248,31 +268,64 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
                 </tr>
               </thead>
               <tbody>
-                {users?.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>
-                      <div className="client">
-                        <div className="client-info">
-                          <h4>{user.username}</h4>
+
+                {isFiltered
+                  ? filteredUsers.map(user => (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td>
+                        <div className="client">
+                          <div className="client-info">
+                            <h4>{user.username}</h4>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>{user.email}</td>
-                    <td>
-                      <span className={user.hasAnswered ? 'green' : 'red'}>
-                        {user.hasAnswered ? 'true' : 'false'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="actions">
-                        <span className="lab la-telegram-plane" style={{ cursor: 'pointer' }} onClick={() => showAlert(user.id)} />
-                        <span className="la la-pencil" style={{ cursor: 'pointer', color: 'green' }} onClick={() => handleUpdateUser(user)} />
-                        <span className="las la-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => showAlertDelete(user.id)} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>
+                        <span className={user.hasAnswered ? 'green' : 'red'}>
+                          {user.hasAnswered ? 'true' : 'false'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="actions">
+                          <span className="lab la-telegram-plane" style={{ cursor: 'pointer' }} onClick={() => showAlert(user.id)} />
+                          <span className="la la-pencil" style={{ cursor: 'pointer', color: 'green' }} onClick={() => handleUpdateUser(user)} />
+                          <span className="las la-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => showAlertDelete(user.id)} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                  : users.filter(user => user.username.toLowerCase().includes(searchKeyword.toLowerCase()) || user.email.toLowerCase().includes(searchKeyword.toLowerCase()))
+                  .map(user => (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td>
+                        <div className="client">
+                          <div className="client-info">
+                            <h4>{user.username}</h4>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{user.email}</td>
+                      <td>
+                        <span className={user.hasAnswered ? 'green' : 'red'}>
+                          {user.hasAnswered ? 'true' : 'false'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="actions">
+                          <span className="lab la-telegram-plane" style={{ cursor: 'pointer' }} onClick={() => showAlert(user.id)} />
+                          <span className="la la-pencil" style={{ cursor: 'pointer', color: 'green' }} onClick={() => handleUpdateUser(user)} />
+                          <span className="las la-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => showAlertDelete(user.id)} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                }
+
+
+
+
               </tbody>
             </table>
           </div>
@@ -425,14 +478,14 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
       >
         <h2 className={styles.popupTitle}>Import Users from Excel</h2>
         <div className={styles.fieldAdd}>
-        <input type="file" accept=".xlsx, .xls" onChange={handleFileSelect} />
+          <input type="file" accept=".xlsx, .xls" onChange={handleFileSelect} />
         </div>
-        
+
         <div className={styles.popupButtonsAdd}>
-        <button onClick={handleFileUpload}className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}>Upload and Save</button>
-        <button onClick={() => setIsImportModalOpen(false)} className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}>Cancel</button>
+          <button onClick={handleFileUpload} className={`${styles.popupButtonAdd} ${styles.popupButtonPrimaryAdd}`}>Upload and Save</button>
+          <button onClick={() => setIsImportModalOpen(false)} className={`${styles.popupButtonAdd} ${styles.popupButtonSecondaryAdd}`}>Cancel</button>
         </div>
-        
+
       </Modal>
 
     </main>
