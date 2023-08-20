@@ -151,8 +151,7 @@ exports.getResponsesByFormId = async (req, res) => {
 
 exports.saveExcelFile = async (req, res) => {
     try {
-        console.log('Received file:', req.file); // Check if the file is received by multer
-        // The Excel file should be saved in the "response" folder due to multer configuration
+        console.log('Received file:', req.file); 
         res.json({ message: 'File saved successfully.' });
     } catch (error) {
         console.error('Error handling the request:', error);

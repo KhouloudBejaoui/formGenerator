@@ -159,6 +159,7 @@ exports.uploadUsers = async (req, res) => {
       }
 
       const newUser = {
+        id: userData.id || null,
         username: userData.username,
         email: userData.email,
         hasAnswered: false

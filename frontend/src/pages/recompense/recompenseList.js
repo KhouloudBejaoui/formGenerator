@@ -109,10 +109,7 @@ const RecompenseList = ({ recompenses, deleteRecompense, updateRecompense, retri
         <div className="records table-responsive">
           <div className="record-header">
             <div className="add">
-              <span>Entries</span>
-              <select name="" id="">
-                <option value="">ID</option>
-              </select>
+
               <button style={{ cursor: 'pointer' }} onClick={() => handleAddRecompense()}>Add reward</button>
             </div>
             <div className="browse">

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { retrieveUsers, deleteUser } from '../../redux/actions/users';
+import { retrieveUsers, deleteUser,deleteAllUsers } from '../../redux/actions/users';
+import {exportResponseToExcel } from '../../redux/actions/response';
+import fileSaver from 'file-saver'; 
 import styles from './user.module.css';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
@@ -9,11 +11,11 @@ import { retrieveRecompenses } from "../../redux/actions/recompense";
 import recompenseDataService from "../../services/recompense.service";
 import userDataService from "../../services/user.service";
 import * as XLSX from 'xlsx';
-const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompenses }) => {
+const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, retrieveRecompenses }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRecompense, setSelectedRecompense] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [isSelectRecompenseModalOpen, setIsSelectRecompenseModalOpen] = useState(false); // New state
+  const [isSelectRecompenseModalOpen, setIsSelectRecompenseModalOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedUser, setSelectedUser] = useState(null);
@@ -22,6 +24,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const [isPopupVisible, setPopupVisible] = useState(false);
+  const [isPopupDeleteAllVisible, setPopupDeleteAllVisible] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
   // State to manage the modal
@@ -48,6 +51,11 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
     setPopupVisible(true);
     setUserIdToDelete(userId);
   };
+
+  const showAlertDeleteAll = () => {
+    setPopupDeleteAllVisible(true);
+  };
+
   const handleClosePopupDelete = () => {
     setPopupVisible(false);
   };
@@ -59,6 +67,14 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
     handleClosePopupDelete();
   };
 
+  const handleDeleteAllUsers = () => {
+    deleteAllUsers();
+    navigate('/users');
+    handleClosePopupDeleteAll();
+  };
+  const handleClosePopupDeleteAll = () => {
+    setPopupDeleteAllVisible(false);
+  };
   // Define states for input fields
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -213,6 +229,56 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
     }
   };
 
+
+  // Function to export the response to Excel
+  const handleExportToExcel = async () => {
+    if (users.length === 0) return;
+  
+    try {
+      // Create a new workbook
+      const workbook = XLSX.utils.book_new();
+      const sheetName = 'Users';
+      const worksheetData = [['id','username','email', 'hasAnswered']];
+  
+      // Add data to the worksheet
+      users.forEach(response => {
+        const rowData = [response.id, response.username,response.email, response.hasAnswered];
+        worksheetData.push(rowData);
+      });
+  
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+  
+      // Add the worksheet to the workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  
+       // Convert the workbook to a binary string
+    const excelFile = XLSX.write(workbook, { type: 'binary', bookType: 'xlsx' });
+
+    // Convert the binary string to a Blob
+    const blob = new Blob([s2ab(excelFile)], { type: 'application/octet-stream' });
+
+    // Send the Excel file to the backend using the exportUsers function
+    const formData = new FormData();
+    formData.append('file', blob, 'users.xlsx');
+    await exportResponseToExcel(formData);
+
+    // Save the Excel file on the frontend
+    fileSaver.saveAs(blob, 'users.xlsx');
+
+  } catch (error) {
+    console.error('Error exporting users to Excel:', error);
+  }
+};
+
+  // Helper function to convert a string to an ArrayBuffer
+  const s2ab = (s) => {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  };
+
+
   return (
     <main>
       <div className="page-header">
@@ -223,12 +289,15 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
         <div className="records table-responsive">
           <div className="record-header">
             <div className="add">
-
               <button style={{ cursor: 'pointer' }} onClick={() => handleAddUser()}>Add user</button>
               <button style={{ cursor: 'pointer', marginLeft: "10px" }} onClick={() => setIsImportModalOpen(true)}>
                 Import Users
               </button>
+              <button style={{ cursor: 'pointer', marginLeft: "10px" }}  onClick={handleExportToExcel} >Export</button>
+              <button style={{ backgroundColor:"red", cursor: 'pointer', marginLeft: "10px" }}  onClick={showAlertDeleteAll} >Delete All</button>
+
             </div>
+            
             <div className="browse">
               <input
                 type="search"
@@ -246,6 +315,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
                 <option value="answered">Answered</option>
                 <option value="not_answered">Not Answered</option>
               </select>
+              
             </div>
           </div>
           <div>
@@ -322,10 +392,6 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
                     </tr>
                   ))
                 }
-
-
-
-
               </tbody>
             </table>
           </div>
@@ -347,6 +413,26 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, retrieveRecompens
             Delete
           </button>
           <button className={`${styles.popupButton} ${styles.popupButtonSecondary}`} onClick={handleClosePopupDelete}>
+            Cancel
+          </button>
+        </div>
+      </Modal>
+
+      {/* DeleteAll Modal Popup */}
+      <Modal
+        isOpen={isPopupDeleteAllVisible}
+        onRequestClose={handleClosePopup}
+        contentLabel="Delete Users"
+        className={styles.popupContainer}
+        overlayClassName={styles.popupOverlay}
+      >
+        <h2 className={styles.popupTitle}>Delete Users</h2>
+        <p className={styles.popupMessage}>Are you sure you want to delete all users?</p>
+        <div className={styles.popupButtons}>
+          <button className={`${styles.popupButton} ${styles.popupButtonPrimary}`} onClick={handleDeleteAllUsers}>
+            Delete
+          </button>
+          <button className={`${styles.popupButton} ${styles.popupButtonSecondary}`} onClick={handleClosePopupDeleteAll}>
             Cancel
           </button>
         </div>
@@ -502,7 +588,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   retrieveRecompenses,
   retrieveUsers,
-  deleteUser
+  deleteUser,
+  deleteAllUsers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

@@ -102,10 +102,7 @@ const ResponseExport = () => {
         <div className="records table-responsive">
           <div className="record-header">
             <div className="add">
-              <span>Entries</span>
-              <select name="" id="">
-                <option value="">ID</option>
-              </select>
+
               <button onClick={handleExportToExcel} style={{cursor:'pointer'}} >Export</button>
             </div>
             <div className="browse">
