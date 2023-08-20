@@ -9,12 +9,10 @@ import responseDataService from "../../services/response.service";
 
 function Userform() {
 
-  const [hasAnswered, setHasAnswered] = useState(false);
+  const [percentageAnswered, setPercentageAnswered] = useState(false);
   const [answer, setAnswer] = useState([]);
   const navigate = useNavigate();
   const { userId, formId } = useParams();
-  const isLoading = useSelector((state) => state.form.loading);
-  const error = useSelector((state) => state.form.error);
   const dispatch = useDispatch();
   const formDetails = useSelector((state) => state.form.formDetails);
   const [invalidInputs, setInvalidInputs] = useState([]);
@@ -42,7 +40,7 @@ function Userform() {
       try {
         // Call your service to check if the user has answered
         const response = await responseDataService.checkResponse(userId, formId);
-        setHasAnswered(response.data.hasAnswered); // Set the hasAnswered state based on the response
+        setPercentageAnswered(response.data.hasAnswered); // Set the hasAnswered state based on the response if the user has responded at least 80% then hasAnswred true
       } catch (error) {
         console.error('Error checking user response:', error);
       }
@@ -116,8 +114,14 @@ function Userform() {
     answer.forEach((ele) => {
       post_answer_data[ele.question] = ele.answer;
 
-      const question = questions.find((q) => q.questionText === ele.question);
-      if (question && question.questionType === 'percentage') {
+      if (ele.answer === '' && questions.find((question) => question.questionText === ele.question).required) {
+        allQuestionsAnswered = false;
+        invalidInputList.push(ele.question);
+      }
+
+      if (
+        questions.find((question) => question.questionText === ele.question).questionType === 'percentage'
+      ) {
         const parsedAnswer = parseFloat(ele.answer);
 
         if (parsedAnswer < 0 || parsedAnswer > 100) {
@@ -155,10 +159,8 @@ function Userform() {
 
     try {
       // Calculate the percentage of answered questions
-      const totalQuestions = formDetails.questions.length;
-      const answeredQuestions = answer.filter((ele) => ele.answer !== '' && ele.answer !== null && ele.answer !== undefined).length;
-      console.log(answeredQuestions);
-      // Calculate the percentage considering unanswered questions as 0%
+      const totalQuestions = formDetails.questions.length; // Replace with the actual total number of questions
+      const answeredQuestions = answer.filter((ele) => ele.answer !== '').length;
       const percentageAnswered = (answeredQuestions / totalQuestions) * 100;
 
       const response = await responseDataService.saveUserResponse({
@@ -186,15 +188,9 @@ function Userform() {
 
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
-  if (!hasAnswered) {
+  if (!percentageAnswered) {
     return (
       <main>
         <div className="page-header">
@@ -212,8 +208,12 @@ function Userform() {
               {questions.map((question, qindex) => (
                 <div key={qindex} className={styles.user_form_questions}>
                   <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
-                    {qindex + 1}.   {question.questionText} {question.required ? <span style={{ color: 'red' }}>*</span> : null}
+                    {qindex + 1}. {question.questionText} {question.required ? <span style={{ color: 'red' }}>*</span> : null}
+                    {invalidInputs.includes(question.questionText) && question.required && (
+                      <span style={{ color: 'red', marginLeft: '5px' }}>(Required)</span>
+                    )}
                   </Typography>
+
                   {question.options.map((ques, index) => (
                     <div key={index} style={{ marginBottom: "5px" }}>
                       <div style={{ display: 'flex' }}>
@@ -248,7 +248,7 @@ function Userform() {
                             ) : (
                               <label>
                                 <input
-                                  type="radio"
+                                  type={question.questionType}
                                   name={qindex}
                                   value={ques.optionText}
                                   className={`${styles["form-check-input"]} ${(invalidInputs.includes(question.questionText) && question.required) ? styles.invalidInput : ''}`}
@@ -257,9 +257,6 @@ function Userform() {
                                   onChange={() => { select(question.questionText, ques.optionText) }}
                                 />
                                 {ques.optionText}
-                                {question.required && (
-                                  <span style={{ color: 'red' }}>{invalidInputs.includes(question.questionText) ? '(Required)' : ''}</span>
-                                )}
                               </label>
                             )
                           ) : (
@@ -274,9 +271,6 @@ function Userform() {
                                 onChange={() => { select(question.questionText, ques.optionText) }}
                               />
                               {ques.optionText}
-                              {question.required && (
-                                <span style={{ color: 'red' }}>{invalidInputs.includes(question.questionText) ? '(Required)' : ''}</span>
-                              )}
                             </label>
                           )}
                         </div>

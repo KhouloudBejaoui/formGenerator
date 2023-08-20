@@ -3,8 +3,7 @@ import { Button, Typography } from '@material-ui/core';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormDetails } from '../../redux/actions/form';
-import axios from "axios";
-import styles from "./userForm.module.css"; // Add the import for styles
+import styles from "./userForm.module.css"; 
 import formDataService from "../../services/form.service";
 
 function FormDetails() {

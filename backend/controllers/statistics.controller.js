@@ -15,7 +15,6 @@ exports.getStatistics = async (req, res) => {
         const usersWithAnswers = await User.count({
             where: { hasAnswered: true }
         });
-console.log("uuuuuu",usersWithAnswers);
         // Calculate the count of users who have not answered (hasAnswered = false)
         const usersWithoutAnswers = userCount - usersWithAnswers;
 

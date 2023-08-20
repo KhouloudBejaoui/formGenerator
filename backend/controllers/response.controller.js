@@ -8,30 +8,52 @@ const Excel = require('exceljs');
 
 // Function to save a user's response and export it to an Excel file
 exports.saveUserResponseAndExport = async (req, res) => {
-    const { userId, formId, questions, responseDuration,percentageAnswered } = req.body;
+    const { userId, formId, questions, responseDuration, percentageAnswered } = req.body;
     console.log('Received data from frontend:', req.body);
+
     try {
-        // Save the user's response to the database
-        const response = await Response.create({
-            userId,
-            formId,
-            responseDuration,
-            percentageAnswered,
-            
+        // Check if a response already exists for the user and form
+        let response = await Response.findOne({
+            where: {
+                userId,
+                formId,
+            },
         });
 
-        // Update the user's hasAnswered attribute to true
-        await User.update(
-            { hasAnswered: true },
-            { where: { id: userId } }
-        );
+        if (!response) {
+            // If no response exists, create a new one
+            response = await Response.create({
+                userId,
+                formId,
+                responseDuration,
+                percentageAnswered,
+            });
+
+            // Update the user's hasAnswered attribute to true
+            await User.update(
+                { hasAnswered: true },
+                { where: { id: userId } }
+            );
+        } else {
+            // If response already exists, update its properties
+            response.responseDuration = responseDuration;
+            response.percentageAnswered = percentageAnswered;
+            await response.save();
+
+            // Delete existing response items
+            await Response_Item.destroy({
+                where: {
+                    responseId: response.id,
+                },
+            });
+        }
 
         // Save the individual response items to the database
         const responseItems = questions.map(({ questionId, optionId, textResponse }) => ({
             responseId: response.id,
             questionId,
             optionId,
-            textResponse, // Include the textResponse field for text-based responses
+            textResponse,
         }));
         await Response_Item.bulkCreate(responseItems);
 
@@ -39,10 +61,9 @@ exports.saveUserResponseAndExport = async (req, res) => {
         const excelData = questions.map(({ questionId, optionId, textResponse }) => {
             return {
                 Question: questionId,
-                Answer: optionId ? optionId : textResponse, // Use optionId if available, otherwise use textResponse
+                Answer: optionId ? optionId : textResponse,
             };
         });
-
         // Export data to Excel
         const workbook = new Excel.Workbook();
         const worksheet = workbook.addWorksheet(`Response-${response.id}`);
@@ -115,7 +136,7 @@ exports.getResponsesByFormId = async (req, res) => {
                 formId: response.formId,
                 responseItems: processedItems,
                 responseDuration: response.responseDuration,
-                percentageAnswered:response.percentageAnswered,
+                percentageAnswered: response.percentageAnswered,
             };
         });
 
@@ -139,10 +160,11 @@ exports.saveExcelFile = async (req, res) => {
     }
 };
 
-
+//if the user has respond => hasAnswred = true
 exports.checkUserResponse = async (req, res) => {
     const userId = req.params.userId;
     const formId = req.params.formId;
+
     try {
         const response = await Response.findOne({
             where: {
@@ -151,7 +173,7 @@ exports.checkUserResponse = async (req, res) => {
             },
         });
 
-        if (response) {
+        if (response && response.percentageAnswered >= 80) {
             return res.json({ hasAnswered: true });
         } else {
             return res.json({ hasAnswered: false });
@@ -161,3 +183,4 @@ exports.checkUserResponse = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while checking user response.' });
     }
 };
+
