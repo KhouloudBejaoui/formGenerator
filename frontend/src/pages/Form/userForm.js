@@ -3,8 +3,9 @@ import { Button, Typography } from '@material-ui/core';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormDetails } from '../../redux/actions/form';
+import { getResponsesByFormId } from '../../redux/actions/response';
 import axios from "axios";
-import styles from "./userForm.module.css"; // Add the import for styles
+import styles from "./userForm.module.css";
 import responseDataService from "../../services/response.service";
 
 function Userform() {
@@ -15,11 +16,18 @@ function Userform() {
   const { userId, formId } = useParams();
   const dispatch = useDispatch();
   const formDetails = useSelector((state) => state.form.formDetails);
+  const responses = useSelector((state) => state.response.responses);
   const [invalidInputs, setInvalidInputs] = useState([]);
   const [startTime, setStartTime] = useState(0);
+  const [inputValues, setInputValues] = useState({});
+  const [checkedValues, setCheckedValues] = useState({});
+  const [radioValues, setRadioValues] = useState({});
+  const { questions = [], documentName, documentDescription } = formDetails || {};
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
+    dispatch(getResponsesByFormId(formId));
+    console.log(responses);
     setStartTime(performance.now());
   }, [dispatch, formId]);
 
@@ -34,6 +42,39 @@ function Userform() {
       );
     }
   }, [formDetails]);
+  useEffect(() => {
+    if (responses.length > 0 && questions.length > 0) {
+      const newInitialCheckValues = {};
+      const newInitialRadioValues = {};
+
+      responses[0].responseItems.forEach((item) => {
+        const questionText = item.questionText;
+        const question = questions.find((q) => q.questionText === questionText);
+
+        if (question && question.questionType === "checkbox") {
+          newInitialCheckValues[questionText] = item.textResponse ? item.textResponse.split(",") : [];
+        } else if (question && question.questionType === "radio") {
+          newInitialRadioValues[questionText] = item.textResponse || "";
+        }
+      });
+
+      setCheckedValues(newInitialCheckValues);
+      setRadioValues(newInitialRadioValues);
+    }
+  }, [responses, questions]);
+
+
+  useEffect(() => {
+    const initialInputValues = {};
+
+    if (responses.length > 0) {
+      responses[0]?.responseItems.forEach((item) => {
+        initialInputValues[item.questionText] = item.textResponse || "";
+      });
+    }
+
+    setInputValues(initialInputValues);
+  }, [responses]);
 
   useEffect(() => {
     async function checkUserResponse() {
@@ -52,7 +93,8 @@ function Userform() {
     }
   }, [userId, formId]);
 
-  const { questions = [], documentName, documentDescription } = formDetails || {};
+
+
 
 
   function select(que, option) {
@@ -65,28 +107,20 @@ function Userform() {
     setAnswer(updatedAnswer);
   }
 
-  function selectcheck(e, que, option) {
-    var d = [];
-    var k = answer.findIndex((ele) => ele.question === que);
+  function selectcheck(que, values) {
+    const updatedAnswer = answer.map((ele) => {
+      if (ele.question === que) {
+        return {
+          ...ele,
+          answer: values.length > 0 ? values.join(',') : '',
+        };
+      }
+      return ele;
+    });
 
-    if (!answer[k].answer) {
-      answer[k].answer = '';
-    }
-
-    if (answer[k].answer) {
-      d = answer[k].answer.split(',');
-    }
-
-    if (e === true) {
-      d.push(option);
-    } else {
-      var n = d.findIndex((el) => el.option === option);
-      d.splice(n, 1);
-    }
-
-    answer[k].answer = d.join(',');
-    setAnswer([...answer]);
+    setAnswer(updatedAnswer);
   }
+
 
   function selectinput(que, option) {
     var k = answer.findIndex((ele) => ele.question === que);
@@ -112,22 +146,21 @@ function Userform() {
     const invalidInputList = [];
 
     answer.forEach((ele) => {
-      post_answer_data[ele.question] = ele.answer;
+      //post_answer_data[ele.question] = (ele.answer !== '' || ele.answer !== null ? ele.answer : checkedValues[ele.question] || inputValues[ele.question]);
+      post_answer_data[ele.question] = ele.answer || inputValues[ele.question];
+      console.log("hhhhh", post_answer_data[ele.question]);
+      const question = questions.find((q) => q.questionText === ele.question);
+      const inputValue = ele.answer || inputValues[ele.question];
 
-      if (ele.answer === '' && questions.find((question) => question.questionText === ele.question).required) {
+      if (!inputValue && question.required) {
         allQuestionsAnswered = false;
         invalidInputList.push(ele.question);
-      }
-
-      if (
-        questions.find((question) => question.questionText === ele.question).questionType === 'percentage'
+      } else if (
+        question.questionType === 'percentage' &&
+        (inputValue < 0 || inputValue > 100)
       ) {
-        const parsedAnswer = parseFloat(ele.answer);
-
-        if (parsedAnswer < 0 || parsedAnswer > 100) {
-          validAnswers = false;
-          invalidInputList.push(ele.question);
-        }
+        validAnswers = false;
+        invalidInputList.push(ele.question);
       }
     });
 
@@ -153,15 +186,23 @@ function Userform() {
       return;
     }
 
+    const existingResponseDuration = responses[0]?.responseDuration || 0;
     const endTime = performance.now(); // Get the current time when the user submits
-
     const responseDuration = endTime - startTime; // Calculate the duration in milliseconds
+    const newTotalResponseDuration = existingResponseDuration + responseDuration;
 
     try {
-      // Calculate the percentage of answered questions
-      const totalQuestions = formDetails.questions.length; // Replace with the actual total number of questions
-      const answeredQuestions = answer.filter((ele) => ele.answer !== '').length;
+
+      const totalQuestions = formDetails.questions.length;
+      let answeredQuestions;
+
+      if (Object.values(inputValues).some(value => value !== '')) {
+        answeredQuestions = answer.filter(ele => ele.answer !== '' || inputValues[ele.question] !== '').length;
+      } else {
+        answeredQuestions = answer.filter(ele => ele.answer !== '').length;
+      }
       const percentageAnswered = (answeredQuestions / totalQuestions) * 100;
+
 
       const response = await responseDataService.saveUserResponse({
         userId: userId,
@@ -176,7 +217,7 @@ function Userform() {
             textResponse: post_answer_data[question.questionText],
           };
         }),
-        responseDuration: responseDuration,
+        responseDuration: newTotalResponseDuration,
         percentageAnswered: percentageAnswered,
       });
 
@@ -187,6 +228,64 @@ function Userform() {
   }
 
 
+  // Function to get the text response value based on questionText
+  const getResponseValue = (questionText) => {
+    const responseQuestion = responses[0]?.responseItems.find(item => item.questionText === questionText);
+    return responseQuestion && responseQuestion.textResponse ? responseQuestion.textResponse : '';
+  };
+
+  // Function to get the checked status for radio and checkbox options
+  const getResponseChecked = (questionText, optionText) => {
+    const responseItem = responses[0]?.responseItems.find(item => item.questionText === questionText);
+    return responseItem ? responseItem.textResponse === optionText : false;
+  };
+
+  const handleInputChange = (questionText, value) => {
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [questionText]: value,
+    }));
+
+    // Only update the answer if the user has modified the input
+    if (getResponseValue(questionText) !== value) {
+      selectinput(questionText, value);
+    }
+  };
+
+
+  const handleCheckChange = (questionText, values) => {
+    setCheckedValues((prevCheckValues) => {
+      const updatedValues = { ...prevCheckValues };
+
+      if (updatedValues[questionText]) {
+        updatedValues[questionText] = values;
+      } else {
+        updatedValues[questionText] = [...values];
+      }
+
+      // Call the selectcheck function with the appropriate parameters
+      selectcheck(questionText, updatedValues[questionText]);
+
+      return updatedValues;
+    });
+  };
+
+
+
+
+
+
+  const handleRadioChange = (questionText, value) => {
+    setRadioValues((prevRadioValues) => ({
+      ...prevRadioValues,
+      [questionText]: value,
+    }));
+
+    // Only update the answer if the user has modified the radio values
+    if (getResponseValue(questionText) !== value) {
+      select(questionText, value);
+    }
+  };
 
 
 
@@ -224,10 +323,11 @@ function Userform() {
                                 <input
                                   type="text"
                                   name={qindex}
+                                  value={inputValues[question.questionText]}
                                   className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
                                   required={question.required}
                                   style={{ marginLeft: "5px", marginRight: "5px" }}
-                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                                  onChange={(e) => { handleInputChange(question.questionText, e.target.value) }}
                                 /> {question.optionText}
                               </label>
                             ) : question.questionType === 'number' || question.questionType === 'percentage' ? (
@@ -235,10 +335,11 @@ function Userform() {
                                 <input
                                   type="number"
                                   name={qindex}
+                                  value={inputValues[question.questionText]}
                                   className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
                                   required={question.required}
                                   style={{ marginLeft: "5px", marginRight: "5px" }}
-                                  onChange={(e) => { selectinput(question.questionText, e.target.value) }}
+                                  onChange={(e) => { handleInputChange(question.questionText, e.target.value) }}
                                 />
                                 {question.optionText}
                                 {question.questionType === 'percentage' && (
@@ -250,12 +351,21 @@ function Userform() {
                                 <input
                                   type={question.questionType}
                                   name={qindex}
-                                  value={ques.optionText}
+                                  checked={(checkedValues[question.questionText] || []).includes(ques.optionText)}
                                   className={`${styles["form-check-input"]} ${(invalidInputs.includes(question.questionText) && question.required) ? styles.invalidInput : ''}`}
                                   required={question.required}
                                   style={{ marginLeft: "5px", marginRight: "5px" }}
-                                  onChange={() => { select(question.questionText, ques.optionText) }}
+                                  onChange={() => {
+                                    const selectedValues = [...(checkedValues[question.questionText] || [])];
+                                    if (selectedValues.includes(ques.optionText)) {
+                                      selectedValues.splice(selectedValues.indexOf(ques.optionText), 1);
+                                    } else {
+                                      selectedValues.push(ques.optionText);
+                                    }
+                                    handleCheckChange(question.questionText, selectedValues);
+                                  }}
                                 />
+
                                 {ques.optionText}
                               </label>
                             )
@@ -264,11 +374,11 @@ function Userform() {
                               <input
                                 type={question.questionType}
                                 name={qindex}
-                                value={ques.optionText}
+                                checked={radioValues[question.questionText] === ques.optionText}
                                 className={`${styles["form-check-input"]} ${invalidInputs.includes(question.questionText) ? styles.invalidInput : ''}`}
                                 required={question.required}
                                 style={{ margnLeft: "5px", marginRight: "5px" }}
-                                onChange={() => { select(question.questionText, ques.optionText) }}
+                                onChange={() => { handleRadioChange(question.questionText, ques.optionText) }}
                               />
                               {ques.optionText}
                             </label>
@@ -300,196 +410,6 @@ function Userform() {
 export default Userform;
 
 
-
-
-/*
-
-import React, { useState, useEffect } from 'react';
-import { Button, Typography } from '@material-ui/core';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getFormDetails } from '../../redux/actions/form';
-import axios from "axios";
-import styles from "./userForm.module.css"; // Add the import for styles
-
-function Userform() {
-    const [answer, setAnswer] = useState([]);
-    const navigate = useNavigate(); // Add the missing 'navigate' variable
-    const { formId } = useParams();
-    const isLoading = useSelector((state) => state.form.loading);
-    const error = useSelector((state) => state.form.error);
-    const dispatch = useDispatch();
-    const formDetails = useSelector((state) => state.form.formDetails);
-
-    useEffect(() => {
-        dispatch(getFormDetails(formId));
-    }, [dispatch, formId]);
-
-    useEffect(() => {
-        if (formDetails && formDetails.questions) {
-            // Initialize the answer state based on the questions structure from formDetails
-            setAnswer(
-                formDetails.questions.map((question) => ({
-                    question: question.questionText,
-                    answer: '',
-                }))
-            );
-        }
-    }, [formDetails]);
-
-
-    const { questions = [], documentName, documentDescription } = formDetails || {};
-
-
-    function select(que, option) {
-        const updatedAnswer = answer.map((ele) => {
-            if (ele.question === que) {
-                return { ...ele, answer: option };
-            }
-            return ele;
-        });
-        setAnswer(updatedAnswer);
-    }
-
-    function selectcheck(e, que, option) {
-        var d = [];
-        var k = answer.findIndex((ele) => ele.question === que);
-
-        if (!answer[k].answer) {
-            answer[k].answer = '';
-        }
-
-        if (answer[k].answer) {
-            d = answer[k].answer.split(',');
-        }
-
-        if (e === true) {
-            d.push(option);
-        } else {
-            var n = d.findIndex((el) => el.option === option);
-            d.splice(n, 1);
-        }
-
-        answer[k].answer = d.join(',');
-        setAnswer([...answer]);
-    }
-
-    function selectinput(que, option) {
-        var k = answer.findIndex((ele) => ele.question === que);
-
-        if (!answer[k].answer) {
-            answer[k].answer = '';
-        }
-
-        answer[k].answer = option;
-        setAnswer([...answer]);
-    
-    }
-
-    function submit() {
-        const post_answer_data = {};
-        answer.forEach((ele) => {
-            post_answer_data[ele.question] = ele.answer;
-        });
-
-        axios.post(`http://localhost:9010/user_response/${documentName}`, {
-            column: questions.map((q) => q.questionText),
-            answer_data: [post_answer_data],
-        });
-
-        navigate(`/submitted`);
-    }
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    return (
-        <main>
-            <div className="page-header">
-                <h1>Forms</h1>
-                <small>Home / View Form</small>
-            </div>
-            <div className={styles.submit}>
-                <div className={styles.user_form}>
-                    <div className={styles.user_form_section}>
-                        <div className={styles.user_title_section}>
-                            <Typography style={{ fontSize: "26px" }}>{documentName}</Typography>
-                            <Typography style={{ fontSize: "15px" }}>{documentDescription}</Typography>
-                        </div>
-                        {questions.map((question, qindex) => (
-                            <div key={qindex} className={styles.user_form_questions}>
-                                <Typography style={{ fontSize: "15px", fontWeight: "400", letterSpacing: '.1px', lineHeight: '24px', paddingBottom: "8px", fontSize: "14px" }}>
-                                    {qindex + 1}.  {question.questionText}
-                                </Typography>
-                                {question.options.map((ques, index) => (
-                                    <div key={index} style={{ marginBottom: "5px" }}>
-                                        <div style={{ display: 'flex' }}>
-                                            <div className={styles["form-check"]}>
-                                                {question.questionType !== "radio" ? (
-                                                    question.questionType !== 'text' ? (
-                                                        <label>
-                                                            <input
-                                                                type={question.questionType}
-                                                                name={qindex}
-                                                                value={ques.optionText}
-                                                                className={styles["form-check-input"]}
-                                                                required={question.required}
-                                                                style={{ margnLeft: "5px", marginRight: "5px" }}
-                                                                onChange={(e) => { selectcheck(e.target.checked, question.questionText, ques.optionText) }}
-                                                            /> {ques.optionText}
-                                                        </label>) : (
-                                                        <label>
-                                                            <input
-                                                                type={question.questionType}
-                                                                name={qindex}
-                                                                value={answer[qindex].answer}
-                                                                className={styles["form-check-input"]}
-                                                                required={question.required}
-                                                                style={{ margnLeft: "5px", marginRight: "5px" }}
-                                                                onChange={(e) => { selectinput(question.questionText, e.target.value) }}
-                                                            /> {ques.optionText}
-                                                        </label>
-                                                    )
-                                                ) : (
-                                                    <label>
-                                                        <input
-                                                            type={question.questionType}
-                                                            name={qindex}
-                                                            value={ques.optionText}
-                                                            className={styles["form-check-input"]}
-                                                            required={question.required}
-                                                            style={{ margnLeft: "5px", marginRight: "5px" }}
-                                                            onChange={() => { select(question.questionText, ques.optionText) }}
-                                                        />
-                                                        {ques.optionText}
-                                                    </label>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                        <div className={styles.user_form_submit}>
-                            <Button variant="contained" color="primary" onClick={submit} style={{ fontSize: "14px" }}>Submit</Button>
-                        </div>
-                        <div className={styles.user_footer}>
-                            IACE Forms
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    );
-}
-
-export default Userform;
-*/
 
 
 

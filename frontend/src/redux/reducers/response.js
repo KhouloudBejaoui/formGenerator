@@ -1,7 +1,8 @@
 import { FETCH_RESPONSES_FAILURE, FETCH_RESPONSES_SUCCESS } from "../actions/types";
 
 const initialState = {
-    responses: [], // Set the initial state as an empty array
+    responses: [],
+    responseData:{},
     loading: false,
     error: null,
   };

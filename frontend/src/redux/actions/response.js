@@ -1,17 +1,29 @@
 import { FETCH_RESPONSES_FAILURE, FETCH_RESPONSES_SUCCESS } from "../actions/types";
 import responseDataService from "../../services/response.service";
 
+
+export const getResponseDataSuccess = (responses) => ({
+  type: FETCH_RESPONSES_SUCCESS,
+  payload: responses,
+});
+
+export const getResponseDataFailure = (error) => ({
+  type: FETCH_RESPONSES_FAILURE,
+  payload: error,
+});
+
 // Assuming you have imported responseDataService and defined the required action types
 export const getResponsesByFormId = (formId) => {
     return async (dispatch) => {
       try {
         const response = await responseDataService.getResponseByFormId(formId);
-        dispatch({ type: FETCH_RESPONSES_SUCCESS, payload: response.data });
+        dispatch(getResponseDataSuccess(response.data));
       } catch (error) {
-        dispatch({ type: FETCH_RESPONSES_FAILURE, payload: error.message });
+        dispatch(getResponseDataFailure(error.message));
       }
     };
   };
+
 
 
 export const exportResponseToExcel = () => async (dispatch) => {
