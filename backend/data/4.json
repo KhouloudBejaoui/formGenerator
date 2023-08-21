@@ -1,57 +1,712 @@
 {
   "formId": 4,
-  "documentName": "Math form",
-  "documentDescription": "simple questions ",
+  "documentName": "Dégitalisation",
+  "documentDescription": "Questionnaire sur la digitalisation",
   "questions": [
     {
-      "questionText": "1+1 = ?",
+      "questionText": "Nom et Prénom",
       "questionType": "text",
       "options": [
         {
           "optionText": "",
-          "optionId": 17
-        }
-      ],
-      "open": false,
-      "required": false,
-      "questionId": 8
-    },
-    {
-      "questionText": "Combien vaut 14 au carré ?",
-      "questionType": "radio",
-      "options": [
-        {
-          "optionText": "196",
-          "optionId": 18
-        },
-        {
-          "optionText": "186",
-          "optionId": 19
-        },
-        {
-          "optionText": "176",
-          "optionId": 20
-        }
-      ],
-      "open": false,
-      "required": false,
-      "questionId": 9
-    },
-    {
-      "questionText": "3! = ?",
-      "questionType": "text",
-      "options": [
-        {
-          "optionText": "",
-          "optionId": 21
+          "optionId": 10
         }
       ],
       "answer": false,
       "answerKey": "",
       "points": 0,
-      "open": true,
+      "open": false,
+      "required": true,
+      "questionId": 8
+    },
+    {
+      "questionText": "Adresse mail",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 11
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 9
+    },
+    {
+      "questionText": "Tel",
+      "questionType": "number",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 12
+        }
+      ],
+      "open": false,
       "required": false,
       "questionId": 10
+    },
+    {
+      "questionText": "Genre",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Homme",
+          "optionId": 13
+        },
+        {
+          "optionText": "Femme",
+          "optionId": 14
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 11
+    },
+    {
+      "questionText": "Gouvernorat",
+      "questionType": "text",
+      "options": [
+        {
+          "optionText": "",
+          "optionId": 15
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 12
+    },
+    {
+      "questionText": "Tranches d'age:",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "18-29",
+          "optionId": 16
+        },
+        {
+          "optionText": "30-49",
+          "optionId": 17
+        },
+        {
+          "optionText": "50 et plus",
+          "optionId": 18
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 13
+    },
+    {
+      "questionText": "Niveau d'études",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Aucun niveau",
+          "optionId": 19
+        },
+        {
+          "optionText": "Niveau Primaire",
+          "optionId": 20
+        },
+        {
+          "optionText": "Niveau Secondaire",
+          "optionId": 21
+        },
+        {
+          "optionText": "Niveau Supérieur",
+          "optionId": 22
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 14
+    },
+    {
+      "questionText": "Catégorie Socio-professionnelle",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Élève ou Etudiant",
+          "optionId": 23
+        },
+        {
+          "optionText": "Chômeur",
+          "optionId": 24
+        },
+        {
+          "optionText": "Ouvrier",
+          "optionId": 25
+        },
+        {
+          "optionText": "Ouvrier qualifié",
+          "optionId": 26
+        },
+        {
+          "optionText": "Cadre",
+          "optionId": 27
+        },
+        {
+          "optionText": "Retraité",
+          "optionId": 28
+        },
+        {
+          "optionText": "Rien",
+          "optionId": 29
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 15
+    },
+    {
+      "questionText": "Taille de l'entreprise dans laquelle vous travaillez",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "< 10 salariés",
+          "optionId": 30
+        },
+        {
+          "optionText": "10-49 salariés",
+          "optionId": 31
+        },
+        {
+          "optionText": "50-199 salariés",
+          "optionId": 32
+        },
+        {
+          "optionText": "200 salariés",
+          "optionId": 33
+        },
+        {
+          "optionText": "Supérieur à 200",
+          "optionId": 34
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 16
+    },
+    {
+      "questionText": "Dans votre quotidien, utilisez-vous le digital",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 35
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 36
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 37
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 38
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 17
+    },
+    {
+      "questionText": "Quel outil de digitalisation utilisez-vous ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "PC",
+          "optionId": 39
+        },
+        {
+          "optionText": "Portable",
+          "optionId": 40
+        },
+        {
+          "optionText": "Smartphone",
+          "optionId": 41
+        },
+        {
+          "optionText": "Tablette",
+          "optionId": 42
+        },
+        {
+          "optionText": "Montres connectées",
+          "optionId": 43
+        },
+        {
+          "optionText": "Objets connectés",
+          "optionId": 44
+        },
+        {
+          "optionText": "Télévision",
+          "optionId": 45
+        },
+        {
+          "optionText": "Application mobile",
+          "optionId": 46
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 47
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 18
+    },
+    {
+      "questionText": "Si vous utilisez le Smartphone, lequel ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "IPhone",
+          "optionId": 48
+        },
+        {
+          "optionText": "Samsung Galaxy",
+          "optionId": 49
+        },
+        {
+          "optionText": "Non",
+          "optionId": 50
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 19
+    },
+    {
+      "questionText": "Quel est le système d’exploitation que vous utilisez ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "IOS (anciennement iPhone OS), développé par Apple",
+          "optionId": 51
+        },
+        {
+          "optionText": "Android",
+          "optionId": 52
+        },
+        {
+          "optionText": "Windows",
+          "optionId": 53
+        },
+        {
+          "optionText": "Blackberry OS (développé par Research In Motion)",
+          "optionId": 54
+        },
+        {
+          "optionText": "Linux (système d'exploitation open source/libre)",
+          "optionId": 55
+        },
+        {
+          "optionText": "Symbian Nokia",
+          "optionId": 56
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 57
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 20
+    },
+    {
+      "questionText": "Quel est le navigateur que vous utilisez ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "Google Chrome",
+          "optionId": 58
+        },
+        {
+          "optionText": "Firefox",
+          "optionId": 59
+        },
+        {
+          "optionText": "Safari",
+          "optionId": 60
+        },
+        {
+          "optionText": "Internet Explorer",
+          "optionId": 61
+        },
+        {
+          "optionText": "Doodle",
+          "optionId": 62
+        },
+        {
+          "optionText": "Opéra",
+          "optionId": 63
+        },
+        {
+          "optionText": "IE+ Edge (Microsoft)",
+          "optionId": 64
+        },
+        {
+          "optionText": "Non concerné",
+          "optionId": 65
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 21
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Social media (Facebook, LinkedIn, Skype, Viber, WhatsApp, Twitter,....)",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 66
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 67
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 68
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 69
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 70
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 22
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Cloud (Dropbox, GoogleDrive, JustCloud, ...)",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 71
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 72
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 73
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 74
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 75
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 23
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Mailing",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 76
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 77
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 78
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 79
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 80
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 24
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Achat",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 81
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 82
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 83
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 84
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 85
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 25
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Paiement",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 86
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 87
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 88
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 89
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 90
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 26
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Recherche",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 91
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 92
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 93
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 94
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 95
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 27
+    },
+    {
+      "questionText": "Comment évaluez-vous votre utilisation du digital ? Travail",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Tout le temps",
+          "optionId": 96
+        },
+        {
+          "optionText": "Souvent",
+          "optionId": 97
+        },
+        {
+          "optionText": "Moyennement",
+          "optionId": 98
+        },
+        {
+          "optionText": "Peu",
+          "optionId": 99
+        },
+        {
+          "optionText": "Jamais",
+          "optionId": 100
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 28
+    },
+    {
+      "questionText": "Quel type de connexion internet utilisez-vous ?",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "ADSL",
+          "optionId": 101
+        },
+        {
+          "optionText": "Fibre Optique",
+          "optionId": 102
+        },
+        {
+          "optionText": "Câble",
+          "optionId": 103
+        },
+        {
+          "optionText": "Wifi",
+          "optionId": 104
+        },
+        {
+          "optionText": "3G",
+          "optionId": 105
+        },
+        {
+          "optionText": "4G",
+          "optionId": 106
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 107
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 29
+    },
+    {
+      "questionText": "Lieu de connexion",
+      "questionType": "checkbox",
+      "options": [
+        {
+          "optionText": "Domicile",
+          "optionId": 108
+        },
+        {
+          "optionText": "Travail",
+          "optionId": 109
+        },
+        {
+          "optionText": "Université",
+          "optionId": 110
+        },
+        {
+          "optionText": "Espace Public",
+          "optionId": 111
+        },
+        {
+          "optionText": "Mobile",
+          "optionId": 112
+        },
+        {
+          "optionText": "Aucun",
+          "optionId": 113
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 30
+    },
+    {
+      "questionText": "Depuis quand avez-vous observé une évolution en matière de digital ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Moins de 2 ans",
+          "optionId": 114
+        },
+        {
+          "optionText": "Entre 2 et 5 ans",
+          "optionId": 115
+        },
+        {
+          "optionText": "Entre 5 et 10 ans",
+          "optionId": 116
+        },
+        {
+          "optionText": "Plus de 10 ans",
+          "optionId": 117
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 31
+    },
+    {
+      "questionText": "Quel est votre fournisseur d’internet ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Globalnet",
+          "optionId": 118
+        },
+        {
+          "optionText": "Topnet",
+          "optionId": 119
+        },
+        {
+          "optionText": "Hexabyte",
+          "optionId": 120
+        },
+        {
+          "optionText": "Orange",
+          "optionId": 121
+        },
+        {
+          "optionText": "TUNET",
+          "optionId": 122
+        },
+        {
+          "optionText": "Ooredoo",
+          "optionId": 123
+        }
+      ],
+      "open": false,
+      "required": false,
+      "questionId": 32
+    },
+    {
+      "questionText": "Quel est votre principal opérateur téléphonique ?",
+      "questionType": "radio",
+      "options": [
+        {
+          "optionText": "Ooredoo",
+          "optionId": 124
+        },
+        {
+          "optionText": "Tunisie Telecom",
+          "optionId": 125
+        },
+        {
+          "optionText": "Orange",
+          "optionId": 126
+        }
+      ],
+      "open": false,
+      "required": true,
+      "questionId": 33
     }
   ]
 }

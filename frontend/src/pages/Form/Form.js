@@ -11,7 +11,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Radio from '@material-ui/core/Radio';
+import RadioIcon from '@material-ui/icons/RadioButtonChecked';
 import Switch from '@material-ui/core/Switch';
 import { BsTrash } from "react-icons/bs";
 import { FcRightUp } from "react-icons/fc";
@@ -368,7 +368,7 @@ const Form = () => {
                             <Select className={styles.select} style={{ color: "#5f6368", fontSize: "13px" }}>
                               <MenuItem id="text" value="Text" onClick={() => { addQuestionType(i, "text") }}> <SubjectIcon style={{ marginRight: "10px" }} />Text input</MenuItem>
                               <MenuItem id="checkbox" value="Checkbox" onClick={() => { addQuestionType(i, "checkbox") }}><CheckBoxIcon style={{ marginRight: "10px", color: "#70757a" }} checked /> Checkboxes</MenuItem>
-                              <MenuItem id="radio" value="Radio" onClick={() => { addQuestionType(i, "radio") }}> <Radio style={{ marginRight: "10px", color: "#70757a" }} checked />Multiple choice</MenuItem>
+                              <MenuItem id="radio" value="Radio" onClick={() => { addQuestionType(i, "radio") }} > <RadioIcon style={{ marginRight: "10px", color: "#70757a" }} checked />Multiple choice</MenuItem>
                               <MenuItem id="number" value="Number" onClick={() => { addQuestionType(i, "number") }}> <Typography variant="body1">
                                 <span style={{ fontSize: '1.5em', marginRight: '5px' }}>#</span>
                                 Number input
