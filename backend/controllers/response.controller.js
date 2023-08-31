@@ -137,6 +137,7 @@ exports.getResponsesByFormId = async (req, res) => {
                 responseItems: processedItems,
                 responseDuration: response.responseDuration,
                 percentageAnswered: response.percentageAnswered,
+                createdAt : response.createdAt,
             };
         });
 
@@ -147,6 +148,56 @@ exports.getResponsesByFormId = async (req, res) => {
     }
 };
 
+
+exports.getResponsesByFormIdAndUserId = async (req, res) => {
+    const { userId,formId } = req.params;
+    try {
+        const responses = await Response.findAll({
+            where: { userId,formId  },
+            include: [
+                {
+                    model: Response_Item,
+                    as: 'responseItems', 
+                    include: [
+                        {
+                            model: Question,
+                            as: 'question',
+                        },
+                    ],
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'username', 'email'],
+                },
+            ],
+        });
+
+        // Process the responses and return the data as needed
+        const processedResponses = responses.map((response) => {
+            const processedItems = response.responseItems.map((item) => ({
+                questionId: item.question.id,
+                questionText: item.question.questionText,
+                textResponse: item.textResponse,
+                optionId: item.optionId, // Include optionId if needed
+            }));
+
+            return {
+                responseId: response.id,
+                userId: response.userId,
+                formId: response.formId,
+                responseItems: processedItems,
+                responseDuration: response.responseDuration,
+                percentageAnswered: response.percentageAnswered,
+                createdAt : response.createdAt,
+            };
+        });
+
+        res.status(200).json(processedResponses);
+    } catch (error) {
+        console.error('Error while fetching responses:', error);
+        res.status(500).send({ message: 'Error while fetching responses.' });
+    }
+};
 
 
 exports.saveExcelFile = async (req, res) => {
@@ -172,7 +223,7 @@ exports.checkUserResponse = async (req, res) => {
             },
         });
 
-        if (response && response.percentageAnswered >= 80) {
+        if (response && response.percentageAnswered == 100) {
             return res.json({ hasAnswered: true });
         } else {
             return res.json({ hasAnswered: false });

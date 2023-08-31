@@ -7,6 +7,7 @@ exports.create = (req, res) => {
   
     // Create a User
     const user = {
+      id: req.body.id,
       username: req.body.username,
       email: req.body.email,
       hasAnswered: req.body.hasAnswered ? req.body.hasAnswered : false

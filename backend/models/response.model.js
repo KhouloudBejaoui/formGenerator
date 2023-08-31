@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         percentageAnswered: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
         },
     });
 

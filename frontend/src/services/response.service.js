@@ -10,6 +10,10 @@ class responseDataService {
     return http.get(`/responses/${id}`);
   }
 
+  getResponsesByFormIdAndUserId(userId,formId) {
+    return http.get(`/responses/${userId}/${formId}`);
+  }
+
   exportResponseToExcel = async (formData) => {
     try {
       const response = await http.post('/responses/saveExcelFile', formData, {

@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
 import fileSaver from 'file-saver';
 
 const ResponseExport = () => {
-  const [responses, setResponses] = useState([]); // State to store the responses
+  const [Allresponses, setAllresponses] = useState([]); // State to store the responses
   const dispatch = useDispatch();
   const { formId } = useParams();
 
@@ -16,11 +16,11 @@ const ResponseExport = () => {
   }, [dispatch, formId]);
 
   // Use the Redux store to get the responses from the state
-  const responsesData = useSelector((state) => state.response.responses);
+  const responsesData = useSelector((state) => state.response.Allresponses);
 
   // Update the state when the responsesData changes
   useEffect(() => {
-    setResponses(responsesData);
+    setAllresponses(responsesData);
   }, [responsesData]);
 
   // Function to export the response to Excel
@@ -31,11 +31,11 @@ const ResponseExport = () => {
       // Create a new workbook
       const workbook = XLSX.utils.book_new();
       const sheetName = 'Responses';
-      const worksheetData = [['USER ID', 'RESPONSE DURATION (ms)', 'percentageAnswered', ...responsesData[0].responseItems.map(item => item.questionText)]];
+      const worksheetData = [['USER ID', 'RESPONSE DURATION (ms)', 'percentageAnswered', 'date GMT', ...responsesData[0].responseItems.map(item => item.questionText)]];
 
       // Add data to the worksheet
       responsesData.forEach(response => {
-        const rowData = [response.userId, response.responseDuration, response.percentageAnswered, ...response.responseItems.map(item => item.textResponse)];
+        const rowData = [response.userId, response.responseDuration, response.percentageAnswered, response.createdAt, ...response.responseItems.map(item => item.textResponse)];
         worksheetData.push(rowData);
       });
 
@@ -129,6 +129,9 @@ const ResponseExport = () => {
                   <th>
                     PERCENTAGE ANSWERED
                   </th>
+                  <th>
+                    DATE GMT
+                  </th>
                   {responsesData.length > 0 && (
                     responsesData[0].responseItems.slice(0, 3).map((item) => (
                       <th key={item.questionId}>
@@ -157,6 +160,13 @@ const ResponseExport = () => {
                     <td>
                       <div className="client-info">
                         <h4>{res.percentageAnswered}%</h4>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="client-info">
+                        <h4>
+                          {new Date(res.createdAt).toISOString().replace(/T/, ' ').replace(/\..+/, '')}
+                        </h4>
                       </div>
                     </td>
                     {responsesData.length > 0 &&

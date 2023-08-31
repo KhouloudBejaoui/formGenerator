@@ -22,6 +22,7 @@ module.exports = app => {
     const upload = multer({ storage: storage });
 
     router.get('/:formId', response.getResponsesByFormId);
+    router.get('/:userId/:formId', response.getResponsesByFormIdAndUserId);
     router.post('/save', response.saveUserResponseAndExport);
     router.post('/saveExcelFile', upload.single('file'), response.saveExcelFile);
 

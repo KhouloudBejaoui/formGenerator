@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
         },
         textResponse: {
-            type: DataTypes.STRING, // Change the data type as needed for the text response
+            type: DataTypes.STRING,
             allowNull: true,
           },
     });

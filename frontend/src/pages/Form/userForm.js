@@ -3,8 +3,7 @@ import { Button, Typography } from '@material-ui/core';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFormDetails } from '../../redux/actions/form';
-import { getResponsesByFormId } from '../../redux/actions/response';
-import axios from "axios";
+import { getResponsesByFormIdAndUserId } from '../../redux/actions/response';
 import styles from "./userForm.module.css";
 import responseDataService from "../../services/response.service";
 
@@ -26,7 +25,7 @@ function Userform() {
 
   useEffect(() => {
     dispatch(getFormDetails(formId));
-    dispatch(getResponsesByFormId(formId));
+    dispatch(getResponsesByFormIdAndUserId(userId, formId));
     console.log(responses);
     setStartTime(performance.now());
   }, [dispatch, formId]);
@@ -47,7 +46,7 @@ function Userform() {
       const newInitialCheckValues = {};
       const newInitialRadioValues = {};
 
-      responses[0].responseItems.forEach((item) => {
+      responses[0]?.responseItems.forEach((item) => {
         const questionText = item.questionText;
         const question = questions.find((q) => q.questionText === questionText);
 
@@ -197,11 +196,11 @@ function Userform() {
       let answeredQuestions;
 
       if (Object.values(inputValues).some(value => value !== '')) {
-        answeredQuestions = answer.filter(ele => ele.answer !== '' || inputValues[ele.question] !== '').length;
+        answeredQuestions = answer.filter(ele => ele.answer != '' && ele.answer != null && ele.answer != undefined || inputValues[ele.question] != '' && inputValues[ele.question] != null).length;
       } else {
-        answeredQuestions = answer.filter(ele => ele.answer !== '').length;
+        answeredQuestions = answer.filter(ele => ele.answer != '' && ele.answer != null && ele.answer != undefined ).length;
       }
-      const percentageAnswered = (answeredQuestions / totalQuestions) * 100;
+      const percentage = (answeredQuestions / totalQuestions) * 100;
 
 
       const response = await responseDataService.saveUserResponse({
@@ -218,7 +217,7 @@ function Userform() {
           };
         }),
         responseDuration: newTotalResponseDuration,
-        percentageAnswered: percentageAnswered,
+        percentageAnswered: percentage,
       });
 
       navigate(`/done`);
@@ -408,7 +407,6 @@ function Userform() {
 }
 
 export default Userform;
-
 
 
 

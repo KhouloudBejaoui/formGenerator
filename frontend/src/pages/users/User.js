@@ -78,8 +78,10 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, r
   // Define states for input fields
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [id, setUserId] = useState('');
 
   const handleAddUser = () => {
+    setUserId('');
     setUsername(''); // Reset the input fields
     setEmail('');
     setSelectedUser(null); // Clear the selected recompense
@@ -88,6 +90,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, r
 
   const handleUpdateUser = (user) => {
     setSelectedUser(user);
+    setUserId(user.id);
     setUsername(user.username);
     setEmail(user.email);
     setIsModalUpdateOpen(true);
@@ -99,6 +102,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, r
         // Update mode
         const updatedUser = {
           ...selectedUser,
+          id,
           email,
           username
         };
@@ -109,6 +113,7 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, r
       } else {
         // Add mode
         const newUser = {
+          id,
           email,
           username,
         };
@@ -512,6 +517,17 @@ const User = ({ users, retrieveUsers, recompenses, deleteUser, deleteAllUsers, r
           {selectedUser ? "Update User" : "Add User"} {/* Update the title */}
         </h2>
         <div className={styles.popupContentAdd}>
+        <div className={styles.fieldAdd}>
+            <label className={styles.labelAdd}>Id</label>
+            <div className={styles.controlAdd}>
+              <input
+                className={styles.inputAdd}
+                type="text"
+                value={id}
+                onChange={(e) => setUserId(e.target.value)}
+              />
+            </div>
+          </div>
           <div className={styles.fieldAdd}>
             <label className={styles.labelAdd}>Username</label>
             <div className={styles.controlAdd}>
